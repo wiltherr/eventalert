@@ -1,14 +1,12 @@
 package de.haw.eventalert.ledbridge.connector;
 
-import de.haw.eventalert.ledbridge.entity.color.types.Color;
+
+import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
 
 public interface LEDControllerConnector {
     boolean open();
 
     void close();
 
-    interface ColorLEDEventSupport {
-        void setColor(Color color);
-    }
-    //void setPartColor(Color color, Part)
+    void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedExecption;
 }

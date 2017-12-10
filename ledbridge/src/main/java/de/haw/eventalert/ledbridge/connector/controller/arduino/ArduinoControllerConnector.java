@@ -1,7 +1,10 @@
 package de.haw.eventalert.ledbridge.connector.controller.arduino;
 
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
-import de.haw.eventalert.ledbridge.entity.color.types.Color;
+import de.haw.eventalert.ledbridge.connector.controller.EffectableLEDControllerConnector;
+import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
+import de.haw.eventalert.ledbridge.entity.event.DimEvent;
+import de.haw.eventalert.ledbridge.entity.event.TimedColorEvent;
 import org.ardulink.core.Link;
 import org.ardulink.core.convenience.Links;
 import org.ardulink.util.URIs;
@@ -13,7 +16,7 @@ import java.io.IOException;
 /**
  * Created by Tim on 12.05.2017.
  */
-public class ArduinoControllerConnector implements LEDControllerConnector, LEDControllerConnector.ColorLEDEventSupport {
+public class ArduinoControllerConnector extends EffectableLEDControllerConnector implements LEDControllerConnector {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArduinoControllerConnector.class);
 
@@ -23,6 +26,7 @@ public class ArduinoControllerConnector implements LEDControllerConnector, LEDCo
     private Link link;
 
     public ArduinoControllerConnector() {
+        //super(true); Einkommentieren wenn die LED einen Zustand hat
     }
 
     private void connectToArduino(String connectionURI) {
@@ -64,8 +68,21 @@ public class ArduinoControllerConnector implements LEDControllerConnector, LEDCo
     }
 
     @Override
-    public void setColor(Color color) {
-        String message = "colr/" + String.join(",", color.asArray()) + "/";
+    public void onTimedColorEvent(TimedColorEvent timedColorEventedEvent) {
+        sendMsg("rgbw/" + String.valueOf(timedColorEventedEvent.getDuration()) + "/" + String.join(",", timedColorEventedEvent.getColor().asArray()) + "/");
+    }
+
+    @Override
+    public void onColorEvent(ColorEvent colorEvent) {
+        sendMsg("colr/" + String.join(",", color.asArray()) + "/");
+    }
+
+    @Override
+    public void onDimEvent(DimEvent dimEvent) {
+        LOG.error("Unsupported event was called");
+    }
+
+    private void sendMsg(String message) {
         try {
             long id = link.sendCustomMessage(message);
             LOG.info("Message#{} send to arduino. Content: {}", id, message);

@@ -1,7 +1,7 @@
 package de.haw.eventalert.ledbridge.core;
 
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
-import de.haw.eventalert.ledbridge.entity.event.ColorLEDEvent;
+import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedExecption;
 import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class LEDManager {
 
     private LEDManager() {
         controllerConnectors = new HashMap<>();
-        ledEventConsumer = new LEDEventConsumer(this::processLEDEvent);
+        ledEventConsumer = new LEDEventConsumer(this::consumeLEDEvent);
     }
 
     public static LEDManager getInstance() {
@@ -29,7 +29,7 @@ public class LEDManager {
         return instance;
     }
 
-    private void processLEDEvent(LEDEvent ledEvent) {
+    private void consumeLEDEvent(LEDEvent ledEvent) {
         LOG.debug("received ledEvent from type={}", ledEvent.getType());
         //check if the target connector is present
         LEDControllerConnector targetConnector = controllerConnectors.get(ledEvent.getTargetLEDId());
@@ -37,22 +37,15 @@ public class LEDManager {
             LOG.error("connector with id={} is not available", ledEvent.getTargetLEDId());
             return;
         }
-        //check type (subclass) of LEDEvent
-        if (ledEvent instanceof ColorLEDEvent) {
-            processColorLEDEvent((ColorLEDEvent) ledEvent, targetConnector);
-        } else {
-            LOG.error("ledEvent type={} is unknown", ledEvent.getType());
+        //provide event to connector
+        try {
+            targetConnector.processEvent(ledEvent);
+        } catch (LEDEventTypeNotSupportedExecption e) {
+            LOG.error("ledEvent type={} is not supported by connector {}", e.getEvent().getType(), ledEvent.getTargetLEDId(), e);
+        } catch (Exception e) {
+            LOG.error("error in connector {}", ledEvent.getTargetLEDId());
         }
 
-    }
-
-    private void processColorLEDEvent(ColorLEDEvent ledEvent, LEDControllerConnector targetConnector) {
-        if (targetConnector instanceof LEDControllerConnector.ColorLEDEventSupport) {
-            LOG.debug("delegate {} to connector {} (id={})", ledEvent.getType(), targetConnector.getClass(), ledEvent.getTargetLEDId());
-            ((LEDControllerConnector.ColorLEDEventSupport) targetConnector).setColor(ledEvent.getColor());
-        } else {
-            LOG.error("ledConnector with id={} does not support ledEvent with type={}", ledEvent.getTargetLEDId(), ledEvent.getType());
-        }
     }
 
     public void registerControllerConnector(LEDControllerConnector ledConnector, Long connectorId) {

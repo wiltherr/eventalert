@@ -13,10 +13,18 @@ import java.io.Serializable;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ColorLEDEvent.class, name = "color")
+        @JsonSubTypes.Type(value = DimEvent.class, name = "dimEvent"),
+        @JsonSubTypes.Type(value = ColorEvent.class, name = "colorEvent"),
+        @JsonSubTypes.Type(value = TimedColorEvent.class, name = "timedColorEvent")
 })
-public @Data
+public abstract @Data
 class LEDEvent implements Serializable {
+
+    public LEDEvent(String type) {
+        this.type = type;
+    }
+
     private String type;
     private long targetLEDId;
 }
+

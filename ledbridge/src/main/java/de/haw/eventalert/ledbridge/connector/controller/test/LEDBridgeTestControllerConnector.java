@@ -1,12 +1,21 @@
 package de.haw.eventalert.ledbridge.connector.controller.test;
 
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
-import de.haw.eventalert.ledbridge.entity.color.types.Color;
+import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedExecption;
+import de.haw.eventalert.ledbridge.connector.controller.EffectableLEDControllerConnector;
+import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
+import de.haw.eventalert.ledbridge.entity.event.DimEvent;
+import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
+import de.haw.eventalert.ledbridge.entity.event.TimedColorEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LEDBridgeTestControllerConnector implements LEDControllerConnector, LEDControllerConnector.ColorLEDEventSupport {
+public class LEDBridgeTestControllerConnector extends EffectableLEDControllerConnector implements LEDControllerConnector {
     private static final Logger LOG = LoggerFactory.getLogger(LEDBridgeTestControllerConnector.class);
+
+    public LEDBridgeTestControllerConnector() {
+        super(true);
+    }
 
     @Override
     public boolean open() {
@@ -20,7 +29,22 @@ public class LEDBridgeTestControllerConnector implements LEDControllerConnector,
     }
 
     @Override
-    public void setColor(Color color) {
-        LOG.info("setColor: " + String.join(",", color.asArray()));
+    public void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedExecption {
+        LOG.info("New ledEvent from type: {}", ledEvent.getType());
+    }
+
+    @Override
+    public void onTimedColorEvent(TimedColorEvent timedColorEventedEvent) {
+        LOG.info("Color timed color event: {} color, {} brigthness, {} duration", color.asArray(), brightness, timedColorEventedEvent.getDuration());
+    }
+
+    @Override
+    public void onColorEvent(ColorEvent colorEvent) {
+        LOG.info("Color changed to: {}", (Object) color.asArray());
+    }
+
+    @Override
+    public void onDimEvent(DimEvent dimEvent) {
+        LOG.info("Brigthness change to: {}", brightness);
     }
 }
