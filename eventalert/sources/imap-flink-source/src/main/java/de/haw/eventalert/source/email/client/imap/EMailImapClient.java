@@ -85,7 +85,7 @@ public class EMailImapClient implements EMailClient {
                     connect();
                 if (!folder.isOpen())
                     openFolder();
-                //folder.idle();
+                //folder.idle(); TODO this is not supported by greenMail. but maybe its not needed either?
             } catch (MessagingException e) {
                 LOG.error("running failed! maybe lost connection to host. {}", e.getMessage(), e);
                 throw new EMailSourceClientExecutionException("client failed  while running, maybe lost connection to host", e);
@@ -139,28 +139,34 @@ public class EMailImapClient implements EMailClient {
     private void openFolder() throws MessagingException, IllegalStateException {
         if (store == null) throw new IllegalStateException("store was not initialised!");
         if (consumer == null) throw new IllegalStateException("no consumer was set!");
-        //get user folder and open with read only access
-        folder = (IMAPFolder) store.getFolder(folderName);
-        folder.open(Folder.READ_ONLY);
 
-        //connect listener on folder with consumer
-        folder.addMessageCountListener(new MessageCountAdapter() {
-            @Override
-            public void messagesAdded(MessageCountEvent e) {
-                Stream.of(e.getMessages())
-                        //Convert messages of messageCountEvent to MailMessages
-                        .map(MessageConverter.toMailMessage)
-                        //apply MailMessages on consumer
-                        .forEach(consumer);
+        if (store.isConnected()) {
+            //open folder if not opened or initialised
+            if (folder == null || !folder.isOpen()) {
+                //get user folder and open with read only access
+                folder = (IMAPFolder) store.getFolder(folderName);
+                folder.open(Folder.READ_ONLY);
+
+                //connect listener on folder with consumer
+                folder.addMessageCountListener(new MessageCountAdapter() {
+                    @Override
+                    public void messagesAdded(MessageCountEvent e) {
+                        Stream.of(e.getMessages())
+                                //Convert messages of messageCountEvent to MailMessages
+                                .map(MessageConverter.toMailMessage)
+                                //apply MailMessages on consumer
+                                .forEach(consumer);
+                    }
+                });
             }
-        });
+        }
     }
 
     private void disconnect() throws MessagingException {
-        if (folder != null)
+        if (folder != null && folder.isOpen()) {
             //folder.removeMessageCountListener(); TODO maybe this is needed?
-            if(folder.isOpen())
-                folder.close(false); //TODO was ist expunge?
+            folder.close(false); //TODO was ist expunge?
+        }
         if (store != null)
             store.close();
     }

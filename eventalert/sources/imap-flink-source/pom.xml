@@ -16,17 +16,22 @@
     <artifactId>imap-flink-source</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <properties>
+        <greenmail.version>1.5.6</greenmail.version>
+        <java.mail.version>1.6.0</java.mail.version><!-- GreenMail will need JavaMail Version 1.5 or higher -->
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.5</version>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${java.mail.version}</version>
         </dependency>
-        <dependency>
+        <dependency><!-- GreeMail is used for testing -->
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail</artifactId>
-            <version>1.5.6</version>
+            <version>${greenmail.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

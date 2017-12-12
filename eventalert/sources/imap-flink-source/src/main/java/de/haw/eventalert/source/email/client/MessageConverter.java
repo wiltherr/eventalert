@@ -54,18 +54,24 @@ public class MessageConverter {
         } catch (MessagingException e) {
             mailMessage.setBcc(null);
         }
+
         //SendTime
         try {
             mailMessage.setSendTime(message.getSentDate().getTime());
         } catch (MessagingException e) {
             mailMessage.setSendTime(null);
         }
+
         //ReceivedTime
         try {
-            mailMessage.setReceivedTime(message.getReceivedDate().getTime());
+            if (message.getReceivedDate() == null) //POP3 does not support received date
+                mailMessage.setReceivedTime(null);
+            else
+                mailMessage.setReceivedTime(message.getReceivedDate().getTime());
         } catch (MessagingException e) {
             mailMessage.setReceivedTime(null);
         }
+
         //Subject
         try {
             mailMessage.setSubject(message.getSubject());
