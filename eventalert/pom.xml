@@ -79,7 +79,9 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.2</version>
+            <!-- Version with M4 is needed for IntelliJ 2017.1.2 support.
+                see http://junit.org/junit5/docs/current/user-guide/#running-tests-ide-intellij-idea -->
+            <version>5.0.0-M4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
