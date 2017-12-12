@@ -6,11 +6,11 @@ import de.haw.eventalert.source.email.client.exception.EMailSourceClientLoginFai
 import java.io.Serializable;
 
 public interface EMailClient extends EMailProducer, Serializable {
-    void init(String host, int port, String userName, String userPassword, String folderName);
+    void init(String protocol, String host, int port, String userName, String userPassword, String folderName);
 
     void login() throws EMailSourceClientLoginFailedException;
 
-    void run() throws EMailSourceClientExecutionException;
+    void runClient() throws EMailSourceClientExecutionException;
 
     void cancel();
 }

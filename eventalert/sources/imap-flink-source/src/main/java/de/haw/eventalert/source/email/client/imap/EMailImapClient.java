@@ -1,10 +1,12 @@
-package de.haw.eventalert.source.email.client;
+package de.haw.eventalert.source.email.client.imap;
 
 /**
  * Created by Tim on 18.08.2017.
  */
 
 import com.sun.mail.imap.IMAPFolder;
+import de.haw.eventalert.source.email.client.EMailClient;
+import de.haw.eventalert.source.email.client.MessageConverter;
 import de.haw.eventalert.source.email.client.exception.EMailSourceClientExecutionException;
 import de.haw.eventalert.source.email.client.exception.EMailSourceClientLoginFailedException;
 import de.haw.eventalert.source.email.entity.MailMessage;
@@ -23,21 +25,22 @@ import java.util.stream.Stream;
  * <p>
  * vorlage: http://www.programcreek.com/java-api-examples/index.php?source_dir=tradeframework-master/event-trader/src/main/java/com/jgoetsch/eventtrader/source/IMAPMsgSource.java
  */
-public class ImapClient implements EMailClient {
+public class EMailImapClient implements EMailClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ImapClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EMailImapClient.class);
     private Consumer<MailMessage> consumer;
     private volatile boolean isRunning;
     private String host;
-    private int port = 993;
+    private int port;
     private String user;
     private String password;
+    private String protocol;
     private String folderName;
-    //private transient Session session; //TODO get rid of tansient (?)
-    private transient Store store;
+
+    private transient Store store; //TODO get rid of tansient (?)
     private transient IMAPFolder folder;
 
-    public ImapClient() {
+    public EMailImapClient() {
     }
 
     @Override
@@ -46,7 +49,8 @@ public class ImapClient implements EMailClient {
     }
 
     @Override
-    public void init(String host, int port, String userName, String userPassword, String folderName) {
+    public void init(String protocol, String host, int port, String userName, String userPassword, String folderName) {
+        this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.user = userName;
@@ -69,8 +73,8 @@ public class ImapClient implements EMailClient {
     }
 
     @Override
-    public void run() throws EMailSourceClientExecutionException {
-        LOG.info("ImapClient runs");
+    public void runClient() throws EMailSourceClientExecutionException {
+        LOG.info("EMailImapClient runs");
         if (store == null) throw new IllegalStateException("client is not logged in!");
         if (consumer == null) throw new IllegalStateException("consumer have to be set before run!");
         isRunning = true;
@@ -81,7 +85,7 @@ public class ImapClient implements EMailClient {
                     connect();
                 if (!folder.isOpen())
                     openFolder();
-                folder.idle();
+                //folder.idle();
             } catch (MessagingException e) {
                 LOG.error("running failed! maybe lost connection to host. {}", e.getMessage(), e);
                 throw new EMailSourceClientExecutionException("client failed  while running, maybe lost connection to host", e);
@@ -103,13 +107,13 @@ public class ImapClient implements EMailClient {
     }
 
     private void connect() throws MessagingException {
-        LOG.info("ImapClient (re)connects");
+        LOG.info("EMailImapClient (re)connects");
 
         //create store if not exists
         if (store == null) {
             //create a new session
             final Properties props = new Properties();
-            props.setProperty("mail.store.protocol", "imaps");
+            props.setProperty("mail.store.protocol", protocol); //TODO imap protokoll oder imaps (ssl) und auch pop3 müssen gehen
             Session session = Session.getDefaultInstance(props);
             //create store
             store = session.getStore();
@@ -155,7 +159,8 @@ public class ImapClient implements EMailClient {
     private void disconnect() throws MessagingException {
         if (folder != null)
             //folder.removeMessageCountListener(); TODO maybe this is needed?
-            folder.close(false); //TODO was ist expunge?
+            if(folder.isOpen())
+                folder.close(false); //TODO was ist expunge?
         if (store != null)
             store.close();
     }

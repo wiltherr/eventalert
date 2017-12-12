@@ -1,7 +1,8 @@
 package de.haw.eventalert.source.email;
 
 
-import de.haw.eventalert.source.email.client.ImapClient;
+import de.haw.eventalert.source.email.client.EMailClient;
+import de.haw.eventalert.source.email.client.imap.EMailImapClient;
 import de.haw.eventalert.source.email.configuration.EMailSourceConfiguration;
 import de.haw.eventalert.source.email.entity.MailMessage;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
@@ -18,7 +19,7 @@ public class EMailSource implements SourceFunction<MailMessage> {
     private static final Logger LOG = LoggerFactory.getLogger(EMailSource.class);
     private volatile boolean isRunning = true;
 
-    private ImapClient client;
+    private EMailClient client;
     private Long sourceId;
 
     public EMailSource(Properties eMailSourceConfProperties) throws IOException {
@@ -26,8 +27,9 @@ public class EMailSource implements SourceFunction<MailMessage> {
     }
 
     public EMailSource(EMailSourceConfiguration sourceConfiguration) {
-        this.client = new ImapClient();
-        this.client.init(sourceConfiguration.getHost(), sourceConfiguration.getPort(), sourceConfiguration.getUser(), sourceConfiguration.getPassword(), sourceConfiguration.getFolder());
+        this.client = new EMailImapClient();
+        //TODO protocol in die property, vielleicht auch einfach die javax properties übernhmen?
+        this.client.init("imaps", sourceConfiguration.getHost(), sourceConfiguration.getPort(), sourceConfiguration.getUser(), sourceConfiguration.getPassword(), sourceConfiguration.getFolder());
         this.sourceId = sourceConfiguration.getId();
     }
 
@@ -36,7 +38,7 @@ public class EMailSource implements SourceFunction<MailMessage> {
         //set the collect function as consumer
         client.setConsumer(sourceContext::collect);
         client.login();
-        client.run();
+        client.runClient();
     }
 
     @Override
