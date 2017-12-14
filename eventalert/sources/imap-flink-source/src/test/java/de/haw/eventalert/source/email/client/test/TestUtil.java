@@ -31,4 +31,12 @@ public class TestUtil {
         return retriever.getMessages(toUser.getLogin(), toUser.getPassword());
     }
 
+    public static void deliverRandomTextMessages(AbstractServer server, GreenMailUser user, int messageCount) {
+        for (int i = 0; i <= messageCount; i++) {
+            user.deliver(TestUtil.generateRandomTextMimeMessage(server.getServerSetup()));
+        }
+        //TODO add real html MimeMessages
+    }
+
+
 }
