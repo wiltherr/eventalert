@@ -1,6 +1,5 @@
 package de.haw.eventalert.source.email.test;
 
-import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
@@ -39,14 +38,7 @@ public class SimpleTestJobThread<T> extends Thread {
     public void run() {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
         DataStream<T> mailMessageDataStream = env.addSource(testSource).name("Test Source");
-        mailMessageDataStream
-                .filter(new FilterFunction<T>() {
-                    @Override
-                    public boolean filter(T value) throws Exception {
-                        System.out.println("source emitted message");
-                        return true;
-                    }
-                }).addSink(testSink).name("Test Sink");
+        mailMessageDataStream.addSink(testSink).name("Test Sink");
         try {
             env.execute("Test Job");
         } catch (Exception e) {

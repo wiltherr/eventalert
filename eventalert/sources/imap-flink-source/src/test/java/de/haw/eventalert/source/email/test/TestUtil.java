@@ -11,6 +11,7 @@ import de.haw.eventalert.source.email.entity.MailMessage;
 import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,10 +43,25 @@ public class TestUtil {
 
     public static void deliverRandomTextMessages(AbstractServer server, GreenMailUser user, int messageCount) {
         for (int i = 0; i < messageCount; i++) {
-            user.deliver(TestUtil.generateRandomTextMimeMessage(server.getServerSetup()));
+            deliverRandomTextMessage(server, user);
         }
         //TODO add real html MimeMessages
     }
+
+    public static void deliverRandomTextMessagesWithDelay(AbstractServer server, GreenMailUser user, int messageCount, int delayInMs) throws InterruptedException {
+        for (int i = 0; i < messageCount; i++) {
+            deliverRandomTextMessage(server, user);
+            TimeUnit.MILLISECONDS.sleep(delayInMs);
+        }
+        //TODO add real html MimeMessages
+    }
+
+    private static void deliverRandomTextMessage(AbstractServer server, GreenMailUser user) {
+        user.deliver(TestUtil.generateRandomTextMimeMessage(server.getServerSetup()));
+    }
+
+
+
 
 
 }

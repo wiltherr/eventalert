@@ -79,7 +79,7 @@ public class EMailClientsTest {
 
     @Test
     public void testImapClientWithSSL() throws ExecutionFailedException, UserAuthFailedException, InterruptedException, IOException, MessagingException {
-        initGreenMail(ServerSetupTest.IMAPS); //TODO schlägt fehl, warum?
+        initGreenMail(ServerSetupTest.IMAPS);
         testClient(greenMail.getImaps(), EMailClients.createImap(), 1000); //SSL needs more time to connect
     }
 

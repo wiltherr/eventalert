@@ -103,7 +103,7 @@ public class EMailImapClient implements EMailClient {
 
         //try to connectStore several times
         int retryCount = 0;
-        while (!store.isConnected() && isRunning && retryCount < CONNECT_RETRY_COUNT_MAX) {
+        while (isRunning && !store.isConnected() && retryCount < CONNECT_RETRY_COUNT_MAX) {
             retryCount++;
             try {
                 LOG.debug("Try to connectStore. Attempt {} of {}", retryCount, CONNECT_RETRY_COUNT_MAX);
