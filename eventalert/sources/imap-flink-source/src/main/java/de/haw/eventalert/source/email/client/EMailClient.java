@@ -1,16 +1,14 @@
 package de.haw.eventalert.source.email.client;
 
-import de.haw.eventalert.source.email.client.exception.EMailSourceClientExecutionException;
-import de.haw.eventalert.source.email.client.exception.EMailSourceClientLoginFailedException;
+import de.haw.eventalert.source.email.client.exception.ExecutionFailedException;
+import de.haw.eventalert.source.email.client.exception.UserAuthFailedException;
 
 import java.io.Serializable;
 
 public interface EMailClient extends EMailProducer, Serializable {
-    void init(String protocol, String host, int port, String userName, String userPassword, String folderName);
+    void init(String host, int port, boolean isSSL, String userName, String userPassword, String folderName);
 
-    void login() throws EMailSourceClientLoginFailedException;
-
-    void runClient() throws EMailSourceClientExecutionException;
+    void runClient() throws ExecutionFailedException, UserAuthFailedException;
 
     void cancel();
 }

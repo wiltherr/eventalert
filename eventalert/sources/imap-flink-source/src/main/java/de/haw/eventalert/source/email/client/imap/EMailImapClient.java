@@ -7,8 +7,8 @@ package de.haw.eventalert.source.email.client.imap;
 import com.sun.mail.imap.IMAPFolder;
 import de.haw.eventalert.source.email.client.EMailClient;
 import de.haw.eventalert.source.email.client.MessageConverter;
-import de.haw.eventalert.source.email.client.exception.EMailSourceClientExecutionException;
-import de.haw.eventalert.source.email.client.exception.EMailSourceClientLoginFailedException;
+import de.haw.eventalert.source.email.client.exception.ExecutionFailedException;
+import de.haw.eventalert.source.email.client.exception.UserAuthFailedException;
 import de.haw.eventalert.source.email.entity.MailMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import javax.mail.*;
 import javax.mail.event.MessageCountAdapter;
 import javax.mail.event.MessageCountEvent;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -28,6 +29,8 @@ import java.util.stream.Stream;
 public class EMailImapClient implements EMailClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(EMailImapClient.class);
+    private static final int CONNECT_RETRY_COUNT_MAX = 5;
+    private static final long CONNECT_RETRY_WAIT_MS = 1500;
     private Consumer<MailMessage> consumer;
     private volatile boolean isRunning;
     private String host;
@@ -49,83 +52,100 @@ public class EMailImapClient implements EMailClient {
     }
 
     @Override
-    public void init(String protocol, String host, int port, String userName, String userPassword, String folderName) {
-        this.protocol = protocol;
+    public void init(String host, int port, boolean isSSL, String userName, String userPassword, String folderName) {
         this.host = host;
         this.port = port;
+
+        if (isSSL)
+            protocol = "imaps";
+        else
+            protocol = "imap";
+
         this.user = userName;
         this.password = userPassword;
         this.folderName = folderName;
     }
 
     @Override
-    public void login() throws EMailSourceClientLoginFailedException {
-        if (consumer == null) throw new IllegalStateException("consumer have to be set before login!");
-        try {
-            connect();
-        } catch (AuthenticationFailedException e) {
-            LOG.error("authentication failed! maybe user login is invalid. host={}:{}, user={}, folderName={}", host, port, user, folderName, e);
-            throw new EMailSourceClientLoginFailedException("user authentication failed", e);
-        } catch (MessagingException e) {
-            LOG.error("login failed! maybe connection to host failed or user data is invalid. host={}:{}, user{}, folderName={}", host, port, user, folderName, e);
-            throw new EMailSourceClientLoginFailedException("login failed: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void runClient() throws EMailSourceClientExecutionException {
-        LOG.info("EMailImapClient runs");
-        if (store == null) throw new IllegalStateException("client is not logged in!");
+    public void runClient() throws ExecutionFailedException, UserAuthFailedException {
         if (consumer == null) throw new IllegalStateException("consumer have to be set before run!");
         isRunning = true;
-
-        while (isRunning) { //TODO stable connection that dont close automaticcly when no new messages are received
-            try {
+        try {
+            connectStore();
+            LOG.info("Client runs.");
+            while (isRunning) { //TODO stable connection that dont close automaticcly when no new messages are received
                 if (!store.isConnected())
-                    connect();
+                    connectStore();
                 if (!folder.isOpen())
                     openFolder();
                 //folder.idle(); TODO this is not supported by greenMail. but maybe its not needed either?
-            } catch (MessagingException e) {
-                LOG.error("running failed! maybe lost connection to host. {}", e.getMessage(), e);
-                throw new EMailSourceClientExecutionException("client failed  while running, maybe lost connection to host", e);
             }
+        } catch (MessagingException e) {
+            LOG.error("running failed! maybe lost connection to host. {}", e.getMessage(), e);
+            throw new ExecutionFailedException("client failed while running, maybe lost connection to host", e);
         }
         isRunning = false;
+        disconnect();
     }
 
     @Override
     public void cancel() {
+        LOG.info("Client was cancelled!");
         this.isRunning = false;
-        LOG.info("client was cancelled!");
-        try {
-            disconnect();
-            LOG.info("client disconnected successfully.");
-        } catch (MessagingException e) {
-            LOG.error("Error disconnecting!", e);
-        }
+        //this.disconnect();
     }
 
-    private void connect() throws MessagingException {
-        LOG.info("EMailImapClient (re)connects");
+    private void connectStore() throws ExecutionFailedException, UserAuthFailedException, MessagingException {
+        LOG.info("Client connects to IMAP Server.");
 
-        //create store if not exists
-        if (store == null) {
+        if (store == null)
+            createStore(); //create store if not exists
+
+        //try to connectStore several times
+        int retryCount = 0;
+        while (!store.isConnected() && isRunning && retryCount < CONNECT_RETRY_COUNT_MAX) {
+            retryCount++;
+            try {
+                LOG.debug("Try to connectStore. Attempt {} of {}", retryCount, CONNECT_RETRY_COUNT_MAX);
+                //connectStore with user data
+                store.connect(host, port, user, password);
+            } catch (AuthenticationFailedException e) {
+                LOG.error("authentication failed! maybe user login is invalid. host={}:{}, user={}, folderName={}", host, port, user, folderName, e);
+                throw new UserAuthFailedException("Server was reachable, but authentication failed: " + e.getMessage(), e);
+            } catch (MessagingException e) {
+                LOG.debug("Connection failed: {}", e.getMessage(), e);
+                LOG.debug("Waiting {}ms for next retry.", CONNECT_RETRY_WAIT_MS);
+
+                try {
+                    //wait for the next retry
+                    TimeUnit.MILLISECONDS.sleep(CONNECT_RETRY_WAIT_MS);
+                } catch (InterruptedException e1) {
+                    LOG.error("Client was interrupted while waiting for next connection retry.", e);
+                    throw new RuntimeException(e1);
+                }
+            }
+        }
+
+        if (store.isConnected()) {
+            LOG.info("Connection was successfully established!");
+        } else {
+            LOG.error("Connection to IMAP server failed.");
+            throw new ExecutionFailedException("could not connectStore to IMAP server.");
+        }
+        openFolder();
+    }
+
+    private void createStore() {
+        try {
             //create a new session
             final Properties props = new Properties();
-            props.setProperty("mail.store.protocol", protocol); //TODO imap protokoll oder imaps (ssl) und auch pop3 müssen gehen
+            props.setProperty("mail.store.protocol", protocol);
             Session session = Session.getDefaultInstance(props);
             //create store
-            store = session.getStore();
+            store = session.getStore(protocol);
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException("mail store protocol '" + protocol + "' is invalid!");
         }
-
-        //connect if not connected
-        if (!store.isConnected()) {
-            //connect with user data
-            store.connect(host, port, user, password);
-        }
-
-        openFolder();
     }
 
     /**
@@ -134,23 +154,24 @@ public class EMailImapClient implements EMailClient {
      * will converts also convert the javax {@link Message} to {@link MailMessage}
      *
      * @throws MessagingException    can be thrown if folder name or store is invalid
-     * @throws IllegalStateException can be thrown if store was not initialised or no consumer was set.
+     * @throws IllegalStateException can be thrown if no consumer was set
      */
     private void openFolder() throws MessagingException, IllegalStateException {
-        if (store == null) throw new IllegalStateException("store was not initialised!");
+        //if (store == null) throw new IllegalStateException("store was not initialised!");
         if (consumer == null) throw new IllegalStateException("no consumer was set!");
 
-        if (store.isConnected()) {
+        if (store != null && store.isConnected()) {
             //open folder if not opened or initialised
             if (folder == null || !folder.isOpen()) {
                 //get user folder and open with read only access
                 folder = (IMAPFolder) store.getFolder(folderName);
                 folder.open(Folder.READ_ONLY);
 
-                //connect listener on folder with consumer
+                //connectStore listener on folder with consumer
                 folder.addMessageCountListener(new MessageCountAdapter() {
                     @Override
                     public void messagesAdded(MessageCountEvent e) {
+                        LOG.debug("MessageCountEvent {} messages added", e.getMessages().length);
                         Stream.of(e.getMessages())
                                 //Convert messages of messageCountEvent to MailMessages
                                 .map(MessageConverter.toMailMessage)
@@ -162,12 +183,32 @@ public class EMailImapClient implements EMailClient {
         }
     }
 
-    private void disconnect() throws MessagingException {
+    private void disconnect() {
+        LOG.info("Client disconnects.");
+        try {
+            closeFolder();
+            LOG.info("Folder was closed successfully.");
+        } catch (MessagingException e) {
+            LOG.error("Error while closing folder!", e);
+        }
+
+        try {
+            closeStore();
+            LOG.info("Store was closed successfully.");
+        } catch (MessagingException e) {
+            LOG.error("Error while closing client!", e);
+        }
+    }
+
+    private void closeFolder() throws MessagingException {
         if (folder != null && folder.isOpen()) {
             //folder.removeMessageCountListener(); TODO maybe this is needed?
             folder.close(false); //TODO was ist expunge?
         }
-        if (store != null)
+    }
+
+    private void closeStore() throws MessagingException {
+        if (store != null && store.isConnected())
             store.close();
     }
 }

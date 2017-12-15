@@ -1,8 +1,7 @@
 package de.haw.eventalert.source.email.client;
 
-import de.haw.eventalert.source.email.client.exception.EMailSourceClientExecutionException;
-import de.haw.eventalert.source.email.client.exception.EMailSourceClientLoginFailedException;
-import de.haw.eventalert.source.email.client.imap.EMailImapClient;
+import de.haw.eventalert.source.email.client.exception.ExecutionFailedException;
+import de.haw.eventalert.source.email.client.exception.UserAuthFailedException;
 import de.haw.eventalert.source.email.entity.MailMessage;
 
 import java.util.function.Consumer;
@@ -23,7 +22,7 @@ class RunnableEMailClient implements EMailClient, Runnable  {
     public void run() {
         try {
             client.runClient();
-        } catch (EMailSourceClientExecutionException e) {
+        } catch (ExecutionFailedException | UserAuthFailedException e) {
             this.cancel();
             throw new RuntimeException(e);
         }
@@ -35,17 +34,12 @@ class RunnableEMailClient implements EMailClient, Runnable  {
     }
 
     @Override
-    public void init(String protocol, String host, int port, String userName, String userPassword, String folderName) {
-        client.init(protocol, host, port, userName, userPassword, folderName);
+    public void init(String host, int port, boolean isSSL, String userName, String userPassword, String folderName) {
+        client.init(host, port, isSSL, userName, userPassword, folderName);
     }
 
     @Override
-    public void login() throws EMailSourceClientLoginFailedException {
-        client.login();
-    }
-
-    @Override
-    public void runClient() throws EMailSourceClientExecutionException {
+    public void runClient() throws ExecutionFailedException, UserAuthFailedException {
         client.runClient();
     }
 

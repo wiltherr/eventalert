@@ -18,7 +18,7 @@
     <packaging>jar</packaging>
     <properties>
         <greenmail.version>1.5.6</greenmail.version>
-        <java.mail.version>1.6.0</java.mail.version><!-- GreenMail will need JavaMail Version 1.5 or higher -->
+        <java.mail.version>1.6.0</java.mail.version><!-- GreenMail needs JavaMail Version 1.5 or higher -->
     </properties>
 
     <dependencies>
@@ -34,6 +34,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
 </project>

@@ -151,7 +151,7 @@ toIdmber  to build a jar file out of this project!
                 <activeByDefault>false</activeByDefault>
             </activation>
 
-            <dependencies>
+            <dependencies><!-- TODO maybe redundant because already in parent-pom -->
                 <dependency>
                     <groupId>org.apache.flink</groupId>
                     <artifactId>flink-java</artifactId>
@@ -159,7 +159,6 @@ toIdmber  to build a jar file out of this project!
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
-                    <!-- TODO maybe redundant because already in parent-pom -->
                     <groupId>org.apache.flink</groupId>
                     <artifactId>flink-streaming-java_2.10</artifactId>
                     <version>${flink.version}</version>
@@ -215,7 +214,7 @@ toIdmber  to build a jar file out of this project!
         <!--<finalName>${project.artifactId}-${project.version}</finalName>-->
         <sourceDirectory>target/generated-sources/delombok</sourceDirectory><!-- TODO LOMOBK workaround -->
         <plugins>
-            <!-- We use the maven-shade plutoNumbern to create a fat jar that contains all dependencies
+            <!-- We use the maven-shade-plugin to create a fat jar that contains all dependencies
             except flink and its transitive dependencies. The resulting fat-jar can be executed
             on a cluster. Change the value of Program-Class if your program entry point changes. -->
             <plugin>
@@ -326,15 +325,14 @@ toIdmber  to build a jar file out of this project!
                                     </excludes>
                                 </filterRule>
                             </filters>
-                            <!-- If you wtoNumbert to use ./bin/flink run <quickstart jar> uncomment the following lines.
-                            This will add a Main-Class entoNumbery to the manifest file -->
-                            <!--
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>de.haw.StreamingJob</mainClass>
-                                </transformer>
-                            </transformers>
-                            -->
+                            <!-- If you want to use ./bin/flink run <quickstart jar> uncomment the following lines.
+                            This will add a Main-Class entry to the manifest file -->
+                            <!--<transformers>-->
+                            <!--<transformer-->
+                            <!--implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">-->
+                            <!--<resource>reference.conf</resource>-->
+                            <!--</transformer>-->
+                            <!--</transformers>-->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
