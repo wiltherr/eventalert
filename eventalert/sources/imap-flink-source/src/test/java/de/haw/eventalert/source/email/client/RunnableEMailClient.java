@@ -1,5 +1,6 @@
 package de.haw.eventalert.source.email.client;
 
+import de.haw.eventalert.source.email.client.exception.ConnectionFailedException;
 import de.haw.eventalert.source.email.client.exception.ExecutionFailedException;
 import de.haw.eventalert.source.email.client.exception.UserAuthFailedException;
 import de.haw.eventalert.source.email.entity.MailMessage;
@@ -22,8 +23,7 @@ class RunnableEMailClient implements EMailClient, Runnable  {
     public void run() {
         try {
             client.runClient();
-        } catch (ExecutionFailedException | UserAuthFailedException e) {
-            this.cancel();
+        } catch (ExecutionFailedException | UserAuthFailedException | ConnectionFailedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -39,9 +39,15 @@ class RunnableEMailClient implements EMailClient, Runnable  {
     }
 
     @Override
-    public void runClient() throws ExecutionFailedException, UserAuthFailedException {
+    public void runClient() throws ExecutionFailedException, UserAuthFailedException, ConnectionFailedException {
         client.runClient();
     }
+
+    @Override
+    public boolean waitStartup(long timeoutMillis) throws InterruptedException {
+        return client.waitStartup(timeoutMillis);
+    }
+
 
     @Override
     public void cancel() {
