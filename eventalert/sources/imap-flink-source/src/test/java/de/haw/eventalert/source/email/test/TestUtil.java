@@ -6,11 +6,14 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.Retriever;
 import com.icegreen.greenmail.util.ServerSetup;
 import de.haw.eventalert.source.email.client.MessageConverter;
+import de.haw.eventalert.source.email.configuration.EMailSourceConfiguration;
 import de.haw.eventalert.source.email.entity.MailMessage;
 
 import javax.mail.Message;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,6 +63,21 @@ public class TestUtil {
         user.deliver(TestUtil.generateRandomTextMimeMessage(server.getServerSetup()));
     }
 
+    public static Properties generateEMailSourceProperties(AbstractServer server, GreenMailUser user) {
+        ServerSetup serverSetup = server.getServerSetup();
+        Properties props = new Properties();
+        //random source id
+        props.setProperty(EMailSourceConfiguration.PROPERTY_KEY_SOURCE_ID, String.valueOf(new Random().nextInt()));
+        //set properties from greenMail server setup
+        props.setProperty(EMailSourceConfiguration.PROPERTY_KEY_EMAIL_SERVER_IP, serverSetup.getBindAddress());
+        props.setProperty(EMailSourceConfiguration.PROPERTY_KEY_EMAIL_SERVER_PORT, String.valueOf(serverSetup.getPort()));
+        props.setProperty(EMailSourceConfiguration.PROPERTY_KEY_EMAIL_SERVER_SECURE, String.valueOf(serverSetup.isSecure()));
+        //set properties from greenMailUser
+        props.setProperty(EMailSourceConfiguration.PROPERTY_KEY_EMAIL_LOGIN_USER, user.getLogin());
+        props.setProperty(EMailSourceConfiguration.PROPERTY_KEY_EMAIL_LOGIN_PASSWORD, user.getPassword());
+        props.setProperty(EMailSourceConfiguration.PROPERTY_KEY_EMAIL_FOLDER, "INBOX");
+        return props;
+    }
 
 
 

@@ -3,6 +3,7 @@ package de.haw.eventalert.source.email.client;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.*;
+import de.haw.eventalert.source.email.configuration.EMailSourceConfiguration;
 import de.haw.eventalert.source.email.entity.MailMessage;
 import de.haw.eventalert.source.email.test.TestUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +26,7 @@ public class EMailClientsTest {
 
     private GreenMail greenMail;
     private GreenMailUser greenMailUser;
-    private RunnableEMailClient runnableEMailClient;
+    private EMailTestClient eMailTestClient;
     private ExecutorService clientExecutor;
 
     @AfterEach
@@ -49,29 +51,22 @@ public class EMailClientsTest {
     }
 
     private void initClient(EMailClient eMailClient, AbstractServer greenMailServer) {
-        runnableEMailClient = new RunnableEMailClient(eMailClient);
-
-        String host = greenMailServer.getServerSetup().getBindAddress();
-        int port = greenMailServer.getServerSetup().getPort();
-        boolean isSSL = greenMailServer.getServerSetup().isSecure();
-
-        String user = greenMailUser.getLogin();
-        String password = greenMailUser.getPassword();
-
-        runnableEMailClient.init(host, port, isSSL, user, password, TEST_FOLDER_NAME);
+        eMailTestClient = new EMailTestClient(eMailClient);
+        Properties props = TestUtil.generateEMailSourceProperties(greenMailServer, greenMailUser);
+        eMailTestClient.setConfiguration(EMailSourceConfiguration.fromProperties(props));
     }
 
     private void runClientThread() throws InterruptedException {
         cancelClientThread();
         clientExecutor = Executors.newSingleThreadExecutor();
-        clientExecutor.submit(runnableEMailClient);
-        boolean clientIsRunning = runnableEMailClient.waitStartup(1000);
+        clientExecutor.submit(eMailTestClient);
+        boolean clientIsRunning = eMailTestClient.waitStartup(1000);
         Assertions.assertTrue(clientIsRunning);
     }
 
     private void cancelClientThread() throws InterruptedException {
         if (clientExecutor != null) {
-            runnableEMailClient.cancel();
+            eMailTestClient.cancel();
             clientExecutor.awaitTermination(2, TimeUnit.MILLISECONDS);
         }
     }
@@ -112,7 +107,7 @@ public class EMailClientsTest {
         initClient(eMailClient, greenMailServer);
         //use a list as consumer for the mailMessages
         List<MailMessage> actualConsumedMailMessages = new ArrayList<>();
-        runnableEMailClient.setConsumer(actualConsumedMailMessages::add);
+        eMailTestClient.setConsumer(actualConsumedMailMessages::add);
         runClientThread();
 
         //deliver random messages to user TODO test real MimeMessages not only text mimeMessages!
@@ -132,7 +127,7 @@ public class EMailClientsTest {
         initClient(eMailClient, greenMailServer);
         //use a list as consumer for the mailMessages
         List<MailMessage> actualConsumedMailMessages = new ArrayList<>();
-        runnableEMailClient.setConsumer(actualConsumedMailMessages::add);
+        eMailTestClient.setConsumer(actualConsumedMailMessages::add);
         runClientThread();
 
         TestUtil.deliverRandomTextMessagesWithDelay(greenMailServer, greenMailUser, 50, 10);

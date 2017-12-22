@@ -3,19 +3,20 @@ package de.haw.eventalert.source.email.client;
 import de.haw.eventalert.source.email.client.exception.ConnectionFailedException;
 import de.haw.eventalert.source.email.client.exception.ExecutionFailedException;
 import de.haw.eventalert.source.email.client.exception.UserAuthFailedException;
+import de.haw.eventalert.source.email.configuration.EMailSourceConfiguration;
 import de.haw.eventalert.source.email.entity.MailMessage;
 
 import java.util.function.Consumer;
 
 /**
  * Created by Tim on 10.12.2017.
- * wrapper for an {@link EMailClient} to implement {@link Runnable} interface
+ * {@link EMailClient} container to implement {@link Runnable} interface for test cases.
  */
-class RunnableEMailClient implements EMailClient, Runnable  {
+class EMailTestClient implements EMailClient, Runnable {
 
     private final EMailClient client;
 
-    public RunnableEMailClient(EMailClient client) {
+    public EMailTestClient(EMailClient client) {
         this.client = client;
     }
 
@@ -34,8 +35,8 @@ class RunnableEMailClient implements EMailClient, Runnable  {
     }
 
     @Override
-    public void init(String host, int port, boolean isSSL, String userName, String userPassword, String folderName) {
-        client.init(host, port, isSSL, userName, userPassword, folderName);
+    public void setConfiguration(EMailSourceConfiguration configuration) {
+        client.setConfiguration(configuration);
     }
 
     @Override

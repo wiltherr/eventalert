@@ -9,6 +9,7 @@ import de.haw.eventalert.source.email.client.EMailClient;
 import de.haw.eventalert.source.email.client.MessageConverter;
 import de.haw.eventalert.source.email.client.exception.ConnectionFailedException;
 import de.haw.eventalert.source.email.client.exception.UserAuthFailedException;
+import de.haw.eventalert.source.email.configuration.EMailSourceConfiguration;
 import de.haw.eventalert.source.email.entity.MailMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,18 +67,14 @@ public class EMailImapClient implements EMailClient {
     }
 
     @Override
-    public void init(String host, int port, boolean isSSL, String userName, String userPassword, String folderName) {
-        this.host = host;
-        this.port = port;
-
-        if (isSSL)
-            protocol = "imaps";
-        else
-            protocol = "imap";
-
-        this.user = userName;
-        this.password = userPassword;
-        this.folderName = folderName;
+    public void setConfiguration(EMailSourceConfiguration configuration) {
+        this.host = configuration.getHost();
+        this.port = configuration.getPort();
+        //ssl need imaps protocol
+        protocol = configuration.isSecure() ? "imaps" : "imap";
+        this.user = configuration.getUser();
+        this.password = configuration.getPassword();
+        this.folderName = configuration.getFolder();
         LOG.debug("Client was initialised.");
     }
 

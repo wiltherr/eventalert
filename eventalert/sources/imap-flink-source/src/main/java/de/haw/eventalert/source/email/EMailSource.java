@@ -28,7 +28,7 @@ public class EMailSource implements SourceFunction<MailMessage> {
     public EMailSource(EMailSourceConfiguration sourceConfiguration) {
         this.client = EMailClients.createImap();
         //TODO protocol in die property, vielleicht auch einfach die javax properties übernhmen?
-        this.client.init(sourceConfiguration.getHost(), sourceConfiguration.getPort(), sourceConfiguration.isSecure(), sourceConfiguration.getUser(), sourceConfiguration.getPassword(), sourceConfiguration.getFolder());
+        this.client.setConfiguration(sourceConfiguration);
         this.sourceId = sourceConfiguration.getId();
     }
 
