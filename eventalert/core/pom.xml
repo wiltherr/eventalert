@@ -77,12 +77,6 @@ toIdmber  to build a jar file out of this project!
     -->
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.14.2</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- Apache Flink dependencies -->
         <dependency>
             <groupId>org.apache.flink</groupId>

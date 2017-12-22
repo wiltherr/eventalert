@@ -13,7 +13,7 @@ public class Colors {
 
     public static void checkValue(int colorVal) {
         if (colorVal < MIN || colorVal > MAX)
-            throw new IllegalArgumentException("Value have to be between " + MIN + " and " + MAX);
+            throw new IllegalArgumentException("Value has to be between " + MIN + " and " + MAX);
     }
 
     public static void checkValues(int... colorVals) {

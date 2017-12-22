@@ -10,8 +10,8 @@ public class RGBWImpl extends RGBImpl implements RGBW {
 
     private int w;
 
-    //Jackson needs a default constructor
-    RGBWImpl() {
+    @SuppressWarnings("unused")
+    RGBWImpl() {  //Jackson needs a default constructor
     }
 
     RGBWImpl(int r, int g, int b, int w) {

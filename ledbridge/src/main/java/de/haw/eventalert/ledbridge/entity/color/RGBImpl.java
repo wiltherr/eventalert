@@ -12,8 +12,8 @@ public class RGBImpl implements RGB {
     private int g;
     private int b;
 
-    //Jackson needs a default constructor
-    RGBImpl() {
+    @SuppressWarnings("unused")
+    RGBImpl() { //Jackson needs a default constructor
     }
 
     RGBImpl(int r, int g, int b) {

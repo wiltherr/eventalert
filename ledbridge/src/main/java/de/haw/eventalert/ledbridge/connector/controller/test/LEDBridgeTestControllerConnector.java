@@ -1,7 +1,7 @@
 package de.haw.eventalert.ledbridge.connector.controller.test;
 
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
-import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedExecption;
+import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedException;
 import de.haw.eventalert.ledbridge.connector.controller.EffectableLEDControllerConnector;
 import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
 import de.haw.eventalert.ledbridge.entity.event.DimEvent;
@@ -29,7 +29,7 @@ public class LEDBridgeTestControllerConnector extends EffectableLEDControllerCon
     }
 
     @Override
-    public void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedExecption {
+    public void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedException {
         LOG.info("New ledEvent from type: {}", ledEvent.getType());
     }
 

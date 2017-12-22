@@ -1,7 +1,7 @@
 package de.haw.eventalert.ledbridge.connector.controller;
 
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
-import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedExecption;
+import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedException;
 import de.haw.eventalert.ledbridge.entity.color.types.Color;
 import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
 import de.haw.eventalert.ledbridge.entity.event.DimEvent;
@@ -22,7 +22,7 @@ public abstract class EffectableLEDControllerConnector extends DyeableLed<Color>
     }
 
     @Override
-    public void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedExecption {
+    public void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedException {
         if (ledEvent instanceof ColorEvent) {
             if (autoSetValues) this.setColor(((ColorEvent) ledEvent).getColor());
             onColorEvent((ColorEvent) ledEvent);
@@ -36,7 +36,7 @@ public abstract class EffectableLEDControllerConnector extends DyeableLed<Color>
             }
             onTimedColorEvent((TimedColorEvent) ledEvent);
         } else {
-            throw new LEDEventTypeNotSupportedExecption(ledEvent);
+            throw new LEDEventTypeNotSupportedException(ledEvent);
         }
     }
 

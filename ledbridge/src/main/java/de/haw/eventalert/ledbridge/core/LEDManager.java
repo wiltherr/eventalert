@@ -1,7 +1,7 @@
 package de.haw.eventalert.ledbridge.core;
 
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
-import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedExecption;
+import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedException;
 import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class LEDManager {
         //provide event to connector
         try {
             targetConnector.processEvent(ledEvent);
-        } catch (LEDEventTypeNotSupportedExecption e) {
+        } catch (LEDEventTypeNotSupportedException e) {
             LOG.error("ledEvent type={} is not supported by connector {}", e.getEvent().getType(), ledEvent.getTargetLEDId(), e);
         } catch (Exception e) {
             LOG.error("error in connector {}", ledEvent.getTargetLEDId());
