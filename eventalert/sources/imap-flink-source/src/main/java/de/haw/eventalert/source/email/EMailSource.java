@@ -16,7 +16,6 @@ import java.util.Properties;
  */
 public class EMailSource implements SourceFunction<MailMessage> {
     private static final Logger LOG = LoggerFactory.getLogger(EMailSource.class);
-    private volatile boolean isRunning = true;
 
     private EMailClient client;
     private Long sourceId;

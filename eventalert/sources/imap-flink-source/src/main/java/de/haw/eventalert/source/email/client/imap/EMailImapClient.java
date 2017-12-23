@@ -33,8 +33,7 @@ public class EMailImapClient implements EMailClient {
     private static final Logger LOG = LoggerFactory.getLogger(EMailImapClient.class);
     private static final int CONNECT_RETRY_COUNT_MAX = 5;
     private static final long CONNECT_RETRY_WAIT_MS = 1500;
-    private final Object waitStartupMonitor = new Object();
-    private final Object reconnectLock = new Object();
+    private final Object waitStartupMonitor = new Object[0]; //wait object has to be serializable
     private volatile boolean isRunning;
     private String host;
     private int port;
@@ -46,7 +45,7 @@ public class EMailImapClient implements EMailClient {
     private transient Store store; //TODO get rid of tansient (?)
     private transient IMAPFolder folder;
 
-    private MessageCountListener listener;
+    private transient MessageCountListener listener;
 
     public EMailImapClient() {
     }

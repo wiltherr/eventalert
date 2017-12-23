@@ -142,7 +142,7 @@ public class EMailClientsTest {
         greenMail.start();
         greenMailUser = greenMail.setUser(greenMailUser.getLogin(), greenMailUser.getPassword());
         //wait the client to reconnect
-        TimeUnit.MILLISECONDS.sleep(1500);
+        TimeUnit.MILLISECONDS.sleep(2000);
 
         TestUtil.deliverRandomTextMessagesWithDelay(greenMailServer, greenMailUser, 50, 10);
         expectedConsumedMailMessages.addAll(TestUtil.retrieveAsMailMessageList(greenMailServer, greenMailUser));
