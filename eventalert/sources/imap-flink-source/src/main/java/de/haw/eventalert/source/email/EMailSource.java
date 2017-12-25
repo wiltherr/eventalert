@@ -18,7 +18,6 @@ public class EMailSource implements SourceFunction<MailMessage> {
     private static final Logger LOG = LoggerFactory.getLogger(EMailSource.class);
 
     private EMailClient client;
-    private Long sourceId;
 
     public EMailSource(Properties eMailSourceConfProperties) {
         this(EMailSourceConfiguration.fromProperties(eMailSourceConfProperties));
@@ -28,7 +27,6 @@ public class EMailSource implements SourceFunction<MailMessage> {
         this.client = EMailClients.createImap();
         //TODO protocol in die property, vielleicht auch einfach die javax properties übernhmen?
         this.client.setConfiguration(sourceConfiguration);
-        this.sourceId = sourceConfiguration.getId();
     }
 
     @Override

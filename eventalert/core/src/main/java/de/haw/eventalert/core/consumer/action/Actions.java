@@ -1,6 +1,6 @@
 package de.haw.eventalert.core.consumer.action;
 
-import de.haw.eventalert.core.consumer.action.example.MyAction;
+import de.haw.eventalert.core.consumer.action.example.ExampleAction;
 import de.haw.eventalert.core.consumer.action.ledevent.LEDEventAction;
 import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
 
@@ -9,7 +9,7 @@ import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
  */
 public class Actions {
     public static Action createMyAction() {
-        return new MyAction();
+        return new ExampleAction();
     }
 
     public static Action createLEDEventAction(LEDEvent ledEvent) {

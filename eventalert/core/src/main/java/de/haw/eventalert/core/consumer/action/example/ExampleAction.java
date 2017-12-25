@@ -5,12 +5,12 @@ import de.haw.eventalert.core.consumer.action.Action;
 /**
  * Created by Tim on 01.11.2017.
  */
-public class MyAction implements Action {
+public class ExampleAction implements Action {
 
     @Override
     public String getName() {
         //unique name
-        return "MyAction";
+        return "ExampleAction";
     }
 
     @Override
@@ -20,6 +20,6 @@ public class MyAction implements Action {
 
     @Override
     public String getConfigurationForLog() {
-        return "";
+        return "ExampleAction";
     }
 }

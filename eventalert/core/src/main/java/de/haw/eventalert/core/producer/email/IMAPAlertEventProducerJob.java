@@ -10,6 +10,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
+
 
 /**
  * Created by Tim on 18.08.2017.
@@ -23,9 +25,9 @@ public class IMAPAlertEventProducerJob {
         //get the execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
         //create the desired source
-        EMailSource EMailSource = new EMailSource("timATksit.org.properties");
+        EMailSource eMailSource = new EMailSource(new Properties());
         //add source to environment
-        DataStream<MailMessage> mailMessageSource = env.addSource(EMailSource);
+        DataStream<MailMessage> mailMessageSource = env.addSource(eMailSource);
         //convert source events to alertEvents
         DataStream<AlertEvent> alertEventDataStream = mailMessageSource.flatMap((mailMessage, out) -> {
             try {

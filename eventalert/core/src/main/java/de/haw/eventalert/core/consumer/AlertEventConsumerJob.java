@@ -1,12 +1,14 @@
 package de.haw.eventalert.core.consumer;
 
-import de.haw.eventalert.core.consumer.action.Action;
 import de.haw.eventalert.core.consumer.action.ActionSink;
+import de.haw.eventalert.core.consumer.filter.FilterRule;
 import de.haw.eventalert.core.consumer.filter.FilterRuleManager;
 import de.haw.eventalert.core.global.AlertEvents;
 import de.haw.eventalert.core.global.entity.event.AlertEvent;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
+import org.apache.flink.streaming.api.windowing.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,85 +47,44 @@ public class AlertEventConsumerJob {
         //filterRuleManager.addFilter(new DefaultFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(testLEDEvent)));
         //filterRuleManager.addFilter(new DefaultFilterRule(MailMessage.EVENT_TYPE,"to", new Condition(STARTWITH, "wittler"), Actions.createLEDEventAction("LED Leuchtet rot")));
 
-        DataStream<Action> filteredAlertEvents = alertEventStream.flatMap((alertEvent, out) -> {
-            //Check if the filterManger has filters for this eventType
-            //Version 3: filterung anhand der alertEvent Felder
-            if (filterRuleManager.hasFilters(alertEvent.getEventType())) { //TODO diese filterung könnte man eigentlich auch auf Flink-Stream ebene machen
-                alertEvent.getEventData().fieldNames().forEachRemaining(fieldName -> {
-                    try { //TODO priority hinzufügen
-                        filterRuleManager.getFilters(alertEvent.getEventType(), fieldName).forEach(filter -> {
-                            String fieldValue = alertEvent.getEventData().get(filter.getFieldName()).asText(); //TODO here we get all fields as text, no matter if its a date or another field
-                            //check if the filter match with this field
-                            switch (filter.getCondition().getType()) {
-                                case CONTAINS:
-                                    if (fieldValue.contains(filter.getCondition().getPattern()))
-                                        out.collect(filter.getAction());
-                                    break;
-                                case STARTWITH:
-                                    if (fieldValue.startsWith(filter.getCondition().getPattern()))
-                                        out.collect(filter.getAction());
-                                    break;
-                                case ENDWITH:
-                                    if (fieldValue.endsWith(filter.getCondition().getPattern()))
-                                        out.collect(filter.getAction());
-                                    break;
-                                case REGEX: //TODO not supported
-                                    break;
-                            }
-                        });
-                    } catch (Exception e) {
-                        LOG.error("error filtering alertEvent", e);
-                    }
-                });
+        transformToMatchingFilterRules(alertEventStream, filterRuleManager) //get filters matching event
+                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(5))) //check matching filters every 5 seconds
+                .max("priority") //get filter with max priority
+                .map(FilterRule::getAction) //get action of filter
+                .addSink(new ActionSink()).name("Action Sink"); //execute action
 
-            }
-            //Version 2 filterung anhand der vorhandenen filter
-//            if (filterRuleManager.hasFilters(alertEvent.getEventType())) {
-//                filterRuleManager.getAllFiltersForEventType(alertEvent.getEventType()).stream()//TODO Test parralel.parallel()
-//                        .filter(x -> alertEvent.getEventData().has(x.getFieldName()))
-//                        .forEach(x -> {
-//                            String fieldValue = alertEvent.getEventData().get(x.getFieldName()).asText(); //TODO here we get all fields as text, no matter if its a date or another field
-//                            //check if the filter match with this field
-//                            switch (x.getCondition().getType()) {
-//                                case CONTAINS:
-//                                    if (fieldValue.contains(x.getCondition().getPattern())) out.collect(x.getAction());
-//                                    return;
-//                                case STARTWITH:
-//                                    if (fieldValue.startsWith(x.getCondition().getPattern())) out.collect(x.getAction());
-//                                    return;
-//                                case ENDWITH:
-//                                    if (fieldValue.endsWith(x.getCondition().getPattern())) out.collect(x.getAction());
-//                                    return;
-//                                case REGEX: //TODO not supported
-//                                    break;
-//                            }
-//                });
-
-            //Version 1
-//                for (FilterRule filter : filterRuleManager.getAllFiltersForEventType(alertEvent.getEventType())) {
-//                    //Check if the event has the fieldName
-//                    if (alertEvent.getEventData().has(filter.getFieldName())) {
-//                        //Get the value from this field as text
-//                        String fieldValue = alertEvent.getEventData().get(filter.getFieldName()).asText(); //TODO here we get all fields as text, no matter if its a date or another field
-//                        //check if the filter match with this field
-//                        switch (filter.getType()) {
-//                            case CONTAINS:
-//                                if (fieldValue.contains(filter.getCondition())) out.collect(filter.getAction());
-//                                return;
-//                            case STARTWITH:
-//                                if (fieldValue.startsWith(filter.getCondition())) out.collect(filter.getAction());
-//                                return;
-//                            case ENDWITH:
-//                                if (fieldValue.endsWith(filter.getCondition())) out.collect(filter.getAction());
-//                                return;
-//                            case REGEX: //TODO not supported
-//                                break;
-//                        }
-//                    }
-//                }
-//            }
-        });
-        filteredAlertEvents.addSink(new ActionSink());
         env.execute();
+    }
+
+    public static DataStream<FilterRule> transformToMatchingFilterRules(DataStream<AlertEvent> alertEventStream, final FilterRuleManager filterRuleManager) {
+        return alertEventStream.filter(event -> filterRuleManager.hasFilters(event.getEventType())) //filter after alertEvent type
+                .flatMap((event, collector) -> //collect matching filters for event
+                        event.getEventData().fieldNames().forEachRemaining(fieldName -> { //iterate over existing alertEvent fields
+                            filterRuleManager.getFilters(event.getEventType(), fieldName).forEach(filter -> { //iterate over filters matching alertEvent type and fieldName
+
+                                String fieldValue = event.getEventData().get(fieldName).asText(); //TODO here we get all fields as text, no matter if its a date or another field
+                                String pattern = filter.getCondition().getPattern();
+                                boolean match = false;
+
+                                //check filter condition matching alertEvent filedValue
+                                switch (filter.getCondition().getType()) {
+                                    case CONTAINS:
+                                        match = fieldValue.contains(pattern);
+                                        break;
+                                    case STARTWITH:
+                                        match = fieldValue.startsWith(pattern);
+                                        break;
+                                    case ENDWITH:
+                                        match = fieldValue.endsWith(pattern);
+                                        break;
+                                    case REGEX: //TODO not supported
+                                        match = fieldValue.matches(pattern);
+                                        break;
+                                }
+
+                                if (match) //collect matching filter
+                                    collector.collect(filter);
+                            });
+                        }));
     }
 }
