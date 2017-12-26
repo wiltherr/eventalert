@@ -1,7 +1,9 @@
 package de.haw.eventalert.core.consumer.filter;
 
+import de.haw.eventalert.core.consumer.filter.manager.TransientFilterRuleManager;
 import org.apache.flink.shaded.com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-class FilterRuleManagerTest {
+class TransientFilterRuleManagerTest {
 
     private static final String PATTERN_STRING = "testPattern";
     private static final String PATTERN_REGEX = ""; //TODO
@@ -38,6 +40,13 @@ class FilterRuleManagerTest {
     private static final FilterRule FILTER_RULE_3 = new DefaultFilterRule(EVENT_TYPE_3, EVENT_FILED_3, CONDITION_ENDS, new EmptyTestAction(), new Random().nextInt());
     private static final FilterRule FILTER_RULE_4 = new DefaultFilterRule(EVENT_TYPE_1, EVENT_FILED_1, CONDITION_REGEX, new EmptyTestAction(), new Random().nextInt());
 
+    private TransientFilterRuleManager filterRuleManager;
+
+    @BeforeEach
+    public void setUp() {
+        filterRuleManager = new TransientFilterRuleManager();
+    }
+
     @Test
     public void testAddAndGet() {
         List<FilterRule> expectedFilterRules = Lists.newArrayList();
@@ -49,25 +58,25 @@ class FilterRuleManagerTest {
         //group expected filter rules by its eventType
         Map<String, List<FilterRule>> expectedFilterRulesByEventType = expectedFilterRules.stream().collect(Collectors.groupingBy(FilterRule::getEventType));
 
-        //check if all added filterRules are in FilterRuleManager
+        //check if all added filterRules are in TransientFilterRuleManager
         expectedFilterRulesByEventType.forEach((eventType, expectedFilterRuleList) ->
-                Assertions.assertIterableEquals(expectedFilterRuleList, FilterRuleManager.getInstance().getAllFiltersForEventType(eventType))
+                Assertions.assertIterableEquals(expectedFilterRuleList, filterRuleManager.getAllFiltersForEventType(eventType))
         );
     }
 
     @Test
     public void testGetNonExitent() {
-        Assertions.assertFalse(FilterRuleManager.getInstance().hasFilters(EVENT_TYPE_NON_EXISITENT));
-        Assertions.assertTrue(FilterRuleManager.getInstance().getAllFiltersForEventType(EVENT_TYPE_NON_EXISITENT).isEmpty());
-        Assertions.assertTrue(FilterRuleManager.getInstance().getFilters(EVENT_TYPE_NON_EXISITENT, "").count() == 0);
+        Assertions.assertFalse(filterRuleManager.hasFilters(EVENT_TYPE_NON_EXISITENT));
+        Assertions.assertTrue(filterRuleManager.getAllFiltersForEventType(EVENT_TYPE_NON_EXISITENT).isEmpty());
+        Assertions.assertTrue(filterRuleManager.getFilters(EVENT_TYPE_NON_EXISITENT, "").count() == 0);
     }
 
     private void addFilterRuleAndCheck(FilterRule filterRule, List<FilterRule> expectedList) {
-        FilterRuleManager.getInstance().addFilter(filterRule);
+        filterRuleManager.addFilter(filterRule);
         //check if manager has filter rules with event type
-        Assertions.assertTrue(FilterRuleManager.getInstance().hasFilters(filterRule.getEventType()));
+        Assertions.assertTrue(filterRuleManager.hasFilters(filterRule.getEventType()));
         //check if manager contains added filter rule
-        Assertions.assertTrue(FilterRuleManager.getInstance()
+        Assertions.assertTrue(filterRuleManager
                 .getFilters(filterRule.getEventType(), filterRule.getFieldName())
                 .anyMatch(actualFilterRule -> Objects.equals(actualFilterRule, filterRule))
         );

@@ -1,6 +1,14 @@
 package de.haw.eventalert.core.consumer;
 
+import de.haw.eventalert.core.consumer.filter.FilterRule;
+import de.haw.eventalert.core.consumer.filter.manager.FilterRuleManager;
 import de.haw.eventalert.core.global.EventAlertConst;
+import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.slf4j.Logger;
@@ -30,6 +38,46 @@ public class AlertEventConsumer {
 
         return new FlinkKafkaConsumer010<>(KAFKA_TOPIC, new SimpleStringSchema(), properties);
     }
+
+    public static FlatMapFunction<AlertEvent, FilterRule> collectMatchingFilters(FilterRuleManager filterRuleManager) {
+        return (event, collector) -> //collect matching filters for event
+                event.getEventData().fieldNames().forEachRemaining(fieldName -> { //iterate over existing alertEvent fields
+                    filterRuleManager.getFilters(event.getEventType(), fieldName).forEach(filter -> { //iterate over filters matching alertEvent type and fieldName
+
+                        String fieldValue = event.getEventData().get(fieldName).asText(); //TODO here we get all fields as text, no matter if its a date or another field
+                        String pattern = filter.getCondition().getPattern();
+                        boolean match = false;
+
+                        //check filter condition matching alertEvent filedValue
+                        switch (filter.getCondition().getType()) {
+                            case CONTAINS:
+                                match = fieldValue.contains(pattern);
+                                break;
+                            case STARTWITH:
+                                match = fieldValue.startsWith(pattern);
+                                break;
+                            case ENDWITH:
+                                match = fieldValue.endsWith(pattern);
+                                break;
+                            case REGEX: //TODO not supported
+                                match = fieldValue.matches(pattern);
+                                break;
+                        }
+
+                        if (match) //collect matching filter
+                            collector.collect(filter);
+                    });
+                });
+    }
+
+    public static FilterFunction<AlertEvent> filterAlertEventsWithFilterRules(FilterRuleManager filterRuleManager) {
+        return event -> filterRuleManager.hasFilters(event.getEventType());
+    }
+
+    public static DataStream<FilterRule> priorisizeFilterRulesInTimeWindow(DataStream<FilterRule> filterRuleStream, WindowAssigner<Object, TimeWindow> windowAssigner) {
+        return filterRuleStream.windowAll(windowAssigner).max("priority");
+    }
+
 
 
 }

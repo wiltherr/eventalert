@@ -13,13 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ActionSinkTest {
 
-    public static final AtomicLong actionRunCounter = new AtomicLong();
-    private static final long ACTION_COUNT = 1000;
+    private static final long ACTION_COUNT = 100;
 
 
     @BeforeEach
     public void setUp() {
-
+        TestAction.actionRunCounter.set(0);
     }
 
     @Test
@@ -35,11 +34,12 @@ class ActionSinkTest {
                 .addSink(new ActionSink());
         env.execute();
 
-        assertEquals(actionList.size(), actionRunCounter.get());
+        assertEquals(actionList.size(), TestAction.actionRunCounter.get());
     }
 
-    public class TestAction implements Action {
+    public static class TestAction implements Action {
 
+        public static final AtomicLong actionRunCounter = new AtomicLong();
         private int number;
 
         public TestAction(int number) {
@@ -53,12 +53,12 @@ class ActionSinkTest {
 
         @Override
         public void runAction() throws Exception {
-            ActionSinkTest.actionRunCounter.incrementAndGet();
+            actionRunCounter.incrementAndGet();
         }
 
         @Override
         public String getConfigurationForLog() {
-            return "current run count: " + ActionSinkTest.actionRunCounter.get();
+            return "current run count: " + actionRunCounter.get();
         }
     }
 }
