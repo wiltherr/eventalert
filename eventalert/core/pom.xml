@@ -134,6 +134,12 @@ toIdmber  to build a jar file out of this project!
         <!--<groupId>de.haw.eventalert</groupId>-->
         <!--<artifactId>telegramclient</artifactId>-->
         <!--</dependency>-->
+        <!-- twitter source -->
+        <dependency>
+            <groupId>de.haw.eventalert</groupId>
+            <artifactId>twitter-flink-source</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <!-- For Rerunning Tests -->
