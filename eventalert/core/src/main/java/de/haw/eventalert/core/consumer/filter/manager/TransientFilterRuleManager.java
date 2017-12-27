@@ -27,6 +27,12 @@ public class TransientFilterRuleManager implements FilterRuleManager {
         allFilters.get(filterRule.getEventType()).add(filterRule);
     }
 
+    public List<FilterRule> getAllFilters() {
+        List<FilterRule> result = Lists.newArrayList();
+        allFilters.values().forEach(result::addAll);
+        return result;
+    }
+
     @Override
     public List<FilterRule> getAllFiltersForEventType(String eventType) {
         if (!hasFilters(eventType)) {

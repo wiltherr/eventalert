@@ -7,15 +7,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Created by Tim on 12.09.2017.
  */
-public class DefaultFilterRule implements FilterRule {
+public class SimpleFilterRule implements FilterRule {
 
     private String eventType;
     private String fieldName;
     private Condition condition;
     private Action action;
-    private Integer priority;
+    private int priority;
 
-    public DefaultFilterRule(String eventType, String fieldName, Condition condition, Action action, Integer priority) {
+    public SimpleFilterRule(String eventType, String fieldName, Condition condition, Action action, Integer priority) {
         this.eventType = eventType;
         this.fieldName = fieldName;
         this.condition = condition;
@@ -28,9 +28,17 @@ public class DefaultFilterRule implements FilterRule {
         return eventType;
     }
 
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
     @Override
     public String getFieldName() {
         return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
     @Override
@@ -38,14 +46,27 @@ public class DefaultFilterRule implements FilterRule {
         return condition;
     }
 
+    public void setCondition(Condition condition) {
+        this.condition = condition;
+    }
+
     @Override
+
     public Action getAction() {
         return action;
     }
 
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
     @Override
-    public Integer getPriority() {
+    public int getPriority() {
         return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     @Override
@@ -54,7 +75,7 @@ public class DefaultFilterRule implements FilterRule {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        DefaultFilterRule that = (DefaultFilterRule) o;
+        SimpleFilterRule that = (SimpleFilterRule) o;
 
         return new EqualsBuilder()
                 .append(eventType, that.eventType)
@@ -74,5 +95,16 @@ public class DefaultFilterRule implements FilterRule {
                 .append(action)
                 .append(priority)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleFilterRule{" +
+                "eventType='" + eventType + '\'' +
+                ", fieldName='" + fieldName + '\'' +
+                ", condition=" + condition +
+                ", action=" + action +
+                ", priority=" + priority +
+                '}';
     }
 }

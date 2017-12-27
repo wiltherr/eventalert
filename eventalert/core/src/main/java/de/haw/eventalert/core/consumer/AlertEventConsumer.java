@@ -11,6 +11,7 @@ import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
+import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,9 @@ public class AlertEventConsumer {
     }
 
     public static FlatMapFunction<AlertEvent, FilterRule> collectMatchingFilters(FilterRuleManager filterRuleManager) {
-        return (event, collector) -> //collect matching filters for event
+        return new FlatMapFunction<AlertEvent, FilterRule>() {
+            @Override
+            public void flatMap(AlertEvent event, Collector<FilterRule> collector) throws Exception {
                 event.getEventData().fieldNames().forEachRemaining(fieldName -> { //iterate over existing alertEvent fields
                     filterRuleManager.getFilters(event.getEventType(), fieldName).forEach(filter -> { //iterate over filters matching alertEvent type and fieldName
 
@@ -68,16 +71,21 @@ public class AlertEventConsumer {
                             collector.collect(filter);
                     });
                 });
+            }
+        };
     }
 
     public static FilterFunction<AlertEvent> filterAlertEventsWithFilterRules(FilterRuleManager filterRuleManager) {
         return event -> filterRuleManager.hasFilters(event.getEventType());
     }
 
-    public static DataStream<FilterRule> priorisizeFilterRulesInTimeWindow(DataStream<FilterRule> filterRuleStream, WindowAssigner<Object, TimeWindow> windowAssigner) {
-        return filterRuleStream.windowAll(windowAssigner).max("priority");
+    public static DataStream<FilterRule> prioritizeFilterRulesInTimeWindow(DataStream<FilterRule> filterRuleStream, WindowAssigner<Object, TimeWindow> windowAssigner) {
+        return filterRuleStream.windowAll(windowAssigner)
+                .reduce((filterRule1, filterRule2) ->
+                        filterRule1.getPriority() > filterRule2.getPriority() ? filterRule1 : filterRule2
+                )
+                .returns(FilterRule.class).name("Window: prioritize FilterRules");
     }
-
 
 
 }

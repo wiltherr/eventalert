@@ -39,17 +39,17 @@ public class AlertEventConsumerJob {
 
         //TimedColorEvent testLEDEventZwei = testLEDEvent.;
         //testLEDEventZwei.setTargetLEDId(1);
-        //filterRuleManager.addFilter(new DefaultFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(testLEDEvent)));
-        //filterRuleManager.addFilter(new DefaultFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(testLEDEventZwei), true));
-        //filterRuleManager.addFilter(new DefaultFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(testLEDEvent)));
-        //filterRuleManager.addFilter(new DefaultFilterRule(MailMessage.EVENT_TYPE,"to", new Condition(STARTWITH, "wittler"), Actions.createLEDEventAction("LED Leuchtet rot")));
+        //filterRuleManager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(testLEDEvent)));
+        //filterRuleManager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(testLEDEventZwei), true));
+        //filterRuleManager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(testLEDEvent)));
+        //filterRuleManager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE,"to", new Condition(STARTWITH, "wittler"), Actions.createLEDEventAction("LED Leuchtet rot")));
 
         DataStream<FilterRule> matchingFilterRuleStream = env.addSource(AlertEventConsumer.createAlertEventConsumer())
                 .flatMap(AlertEvents.convertToAlertEvent())
                 .filter(AlertEventConsumer.filterAlertEventsWithFilterRules(filterRuleManager))
                 .flatMap(AlertEventConsumer.collectMatchingFilters(filterRuleManager));
 
-        AlertEventConsumer.priorisizeFilterRulesInTimeWindow(matchingFilterRuleStream, TumblingProcessingTimeWindows.of(Time.seconds(5)))
+        AlertEventConsumer.prioritizeFilterRulesInTimeWindow(matchingFilterRuleStream, TumblingProcessingTimeWindows.of(Time.seconds(5)))
                 .map(FilterRule::getAction) //get action of filter
                 .addSink(new ActionSink()).name("Action Sink"); //execute action
 

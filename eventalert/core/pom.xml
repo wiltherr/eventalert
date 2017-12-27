@@ -38,19 +38,19 @@ under the License.
         <scala.binary.version>2.10</scala.binary.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>apache.snapshots</id>
-            <name>Apache Development Snapshot Repository</name>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+    <!--<repository>-->
+    <!--<id>apache.snapshots</id>-->
+    <!--<name>Apache Development Snapshot Repository</name>-->
+    <!--<url>https://repository.apache.org/content/repositories/snapshots/</url>-->
+    <!--<releases>-->
+    <!--<enabled>true</enabled>-->
+    <!--</releases>-->
+    <!--<snapshots>-->
+    <!--<enabled>false</enabled>-->
+    <!--</snapshots>-->
+    <!--</repository>-->
+    <!--</repositories>-->
 
     <!--
 
@@ -134,6 +134,19 @@ toIdmber  to build a jar file out of this project!
         <!--<groupId>de.haw.eventalert</groupId>-->
         <!--<artifactId>telegramclient</artifactId>-->
         <!--</dependency>-->
+
+        <dependency>
+            <!-- For Rerunning Tests -->
+            <groupId>io.github.artsok</groupId>
+            <artifactId>rerunner-jupiter</artifactId>
+            <version>1.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -205,8 +218,6 @@ toIdmber  to build a jar file out of this project!
     </profiles>
 
     <build>
-        <!--<finalName>${project.artifactId}-${project.version}</finalName>-->
-        <sourceDirectory>target/generated-sources/delombok</sourceDirectory><!-- TODO LOMOBK workaround -->
         <plugins>
             <!-- We use the maven-shade-plugin to create a fat jar that contains all dependencies
             except flink and its transitive dependencies. The resulting fat-jar can be executed
@@ -334,24 +345,6 @@ toIdmber  to build a jar file out of this project!
             </plugin>
 
             <plugin>
-                <groupId>org.projectlombok</groupId><!-- TODO LOMOBK workaround -->
-                <artifactId>lombok-maven-plugin</artifactId>
-                <version>1.16.18.1</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>delombok</goal>
-                        </goals>
-                        <configuration>
-                            <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>src/main/java</sourceDirectory>
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
@@ -391,38 +384,7 @@ toIdmber  to build a jar file out of this project!
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <!-- Experimental execute job -->
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <id>start-imap</id>
-                        <configuration>
-                            <executable>bin/flink</executable>
-                            <workingDirectory>${flink.directory}</workingDirectory>
-                            <arguments>
-                                <argument>run</argument>
-                                <!--<argument>-c</argument>-->
-                                <!--<argument>-c</argument>-->
-                                <!--<argument>de.haw.eventalert.core.producer.email.IMAPAlertEventProducerJob</argument>-->
-                                <!--<argument>${project.build.directory}/${project.build.finalName}.jar</argument>-->
-                                <argument>-d</argument>
-                                <!--<argument>de.haw.eventalert.core.producer.email.IMAPAlertEventProducerJob</argument>-->
-                                <argument>${project.build.directory}/${project.build.finalName}-Iteration.jar</argument>
-
-                            </arguments>
-                        </configuration>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
-        <!-- If you wtoNumbert to use Java 8 Lambda Expressions uncomment the following lines -->
 
         <pluginManagement>
             <plugins>

@@ -35,10 +35,10 @@ class TransientFilterRuleManagerTest {
     private static final String EVENT_FILED_2 = "testFiled2";
     private static final String EVENT_FILED_3 = "testFiled3";
 
-    private static final FilterRule FILTER_RULE_1 = new DefaultFilterRule(EVENT_TYPE_1, EVENT_FILED_1, CONDITION_CONTAINS, new EmptyTestAction(), new Random().nextInt());
-    private static final FilterRule FILTER_RULE_2 = new DefaultFilterRule(EVENT_TYPE_2, EVENT_FILED_2, CONDITION_STARTS, new EmptyTestAction(), new Random().nextInt());
-    private static final FilterRule FILTER_RULE_3 = new DefaultFilterRule(EVENT_TYPE_3, EVENT_FILED_3, CONDITION_ENDS, new EmptyTestAction(), new Random().nextInt());
-    private static final FilterRule FILTER_RULE_4 = new DefaultFilterRule(EVENT_TYPE_1, EVENT_FILED_1, CONDITION_REGEX, new EmptyTestAction(), new Random().nextInt());
+    private static final FilterRule FILTER_RULE_1 = new SimpleFilterRule(EVENT_TYPE_1, EVENT_FILED_1, CONDITION_CONTAINS, new EmptyTestAction(), new Random().nextInt());
+    private static final FilterRule FILTER_RULE_2 = new SimpleFilterRule(EVENT_TYPE_2, EVENT_FILED_2, CONDITION_STARTS, new EmptyTestAction(), new Random().nextInt());
+    private static final FilterRule FILTER_RULE_3 = new SimpleFilterRule(EVENT_TYPE_3, EVENT_FILED_3, CONDITION_ENDS, new EmptyTestAction(), new Random().nextInt());
+    private static final FilterRule FILTER_RULE_4 = new SimpleFilterRule(EVENT_TYPE_1, EVENT_FILED_1, CONDITION_REGEX, new EmptyTestAction(), new Random().nextInt());
 
     private TransientFilterRuleManager filterRuleManager;
 
