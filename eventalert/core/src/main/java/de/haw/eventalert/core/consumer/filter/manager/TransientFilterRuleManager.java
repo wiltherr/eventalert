@@ -15,7 +15,6 @@ public class TransientFilterRuleManager implements FilterRuleManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransientFilterRuleManager.class);
 
-    private static TransientFilterRuleManager instance;
     private Map<String, List<FilterRule>> allFilters;
 
     public TransientFilterRuleManager() {

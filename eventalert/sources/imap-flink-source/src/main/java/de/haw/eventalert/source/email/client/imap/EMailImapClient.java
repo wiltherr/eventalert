@@ -89,7 +89,7 @@ public class EMailImapClient implements EMailClient {
         }
 
         LOG.info("Client started. Startup time: {}ms", System.currentTimeMillis() - startTime);
-        while (isRunning) { //TODO stable connection that dont close automaticcly when no new messages are received
+        while (isRunning) { //TODO stable connection that don't close automatically when no new messages are received
             if (!store.isConnected() || !folder.isOpen())
                 reconnect();
             //folder.idle(); TODO this is not supported by greenMail. but maybe its not needed either?

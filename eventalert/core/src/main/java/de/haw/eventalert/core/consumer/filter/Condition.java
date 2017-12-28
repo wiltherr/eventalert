@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Condition implements Serializable {
     private Type type;
 
-    private String pattern; //TODO umbennen?
+    private String pattern;
 
     public Condition(Type type, String pattern) {
         this.type = type;

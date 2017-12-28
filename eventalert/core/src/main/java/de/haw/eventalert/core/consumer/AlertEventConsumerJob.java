@@ -12,16 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Tim on 19.08.2017.
+ * this flink job collect all {@link de.haw.eventalert.core.global.alertevent.AlertEvent} and filter them by {@link FilterRule}s.
+ * if a {@link FilterRule} matches to a {@link de.haw.eventalert.core.global.alertevent.AlertEvent} the {@link FilterRule} with the highest priority is selected in a specific time window
+ * and the {@link de.haw.eventalert.core.consumer.action.Action} of the selected {@link FilterRule} will be execute executed by {@link ActionSink}
  */
 public class AlertEventConsumerJob {
     private static final Logger LOG = LoggerFactory.getLogger(AlertEventConsumerJob.class);
 
-    private static final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
-
     public static void main(String[] args) throws Exception {
         LOG.info("========== AlertEventConsumerJob started ==========");
-
+        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
         //Get all alert-events
         DataStream<String> jsonAlertEventStream = env.addSource(AlertEventConsumer.createAlertEventConsumer());
 

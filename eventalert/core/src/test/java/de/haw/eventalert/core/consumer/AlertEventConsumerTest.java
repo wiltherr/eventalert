@@ -6,6 +6,7 @@ import de.haw.eventalert.core.consumer.filter.FilterRule;
 import de.haw.eventalert.core.consumer.filter.SimpleFilterRule;
 import de.haw.eventalert.core.consumer.filter.manager.TransientFilterRuleManager;
 import de.haw.eventalert.core.global.alertevent.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvents;
 import de.haw.eventalert.core.test.TestEvent;
 import io.github.artsok.RepeatedIfExceptionsTest;
 import org.apache.flink.shaded.com.google.common.collect.Lists;
@@ -68,9 +69,9 @@ class AlertEventConsumerTest {
         invalidFilters.forEach(filterRuleManager::addFilter);
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
-        env.fromElements(new AlertEvent(TEST_EVENT_TYPE, TEST_EVENT_1),
-                new AlertEvent(TEST_EVENT_TYPE, TEST_EVENT_2),
-                new AlertEvent(TEST_EVENT_TYPE, TEST_EVENT_3))
+        env.fromElements(AlertEvents.createEvent(TEST_EVENT_TYPE, TEST_EVENT_1),
+                AlertEvents.createEvent(TEST_EVENT_TYPE, TEST_EVENT_2),
+                AlertEvents.createEvent(TEST_EVENT_TYPE, TEST_EVENT_3))
 
                 .flatMap(AlertEventConsumer.collectMatchingFilters(filterRuleManager))
                 .addSink(new FilterRuleSink());
@@ -89,8 +90,8 @@ class AlertEventConsumerTest {
         //add all valid filtersRules to ruleManager
         validFilters.forEach(filterRuleManager::addFilter);
 
-        List<AlertEvent> eventsWithFilterRules = Lists.newArrayList(new AlertEvent(TEST_EVENT_TYPE, TEST_EVENT_2), new AlertEvent(TEST_EVENT_TYPE, TEST_EVENT_3));
-        List<AlertEvent> eventsWithoutFilterRules = Lists.newArrayList(new AlertEvent("randomType", TEST_EVENT_1), new AlertEvent("randomType", TEST_EVENT_3));
+        List<AlertEvent> eventsWithFilterRules = Lists.newArrayList(AlertEvents.createEvent(TEST_EVENT_TYPE, TEST_EVENT_2), AlertEvents.createEvent(TEST_EVENT_TYPE, TEST_EVENT_3));
+        List<AlertEvent> eventsWithoutFilterRules = Lists.newArrayList(AlertEvents.createEvent("randomType", TEST_EVENT_1), AlertEvents.createEvent("randomType", TEST_EVENT_3));
 
         List<AlertEvent> testAlertEvents = Lists.newArrayList();
         testAlertEvents.addAll(eventsWithFilterRules);

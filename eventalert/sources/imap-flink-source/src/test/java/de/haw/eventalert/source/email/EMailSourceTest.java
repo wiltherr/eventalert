@@ -62,6 +62,7 @@ public class EMailSourceTest {
         //deliver emails via greenMail
         TestUtil.deliverRandomTextMessagesWithDelay(greenMail.getImap(), greenMailUser, messageCount, 10);
         List<MailMessage> expectedMessages = TestUtil.retrieveAsMailMessageList(greenMail.getImap(), greenMailUser);
+        TimeUnit.SECONDS.sleep(1); //wait one second to ensure that all messages can be received
         Assertions.assertIterableEquals(expectedMessages, receivedTestSinkMessage);
     }
 

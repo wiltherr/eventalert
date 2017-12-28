@@ -16,7 +16,7 @@ public interface FilterRule extends Serializable {
 
     Action getAction();
 
-    int getPriority(); //TODO muss umgesetzt werden
+    int getPriority();
 
     boolean equals(Object other);
 }
