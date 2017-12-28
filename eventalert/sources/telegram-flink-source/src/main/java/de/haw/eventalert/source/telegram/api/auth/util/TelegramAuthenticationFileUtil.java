@@ -3,12 +3,12 @@ package de.haw.eventalert.source.telegram.api.auth.util;
 import com.github.badoualy.telegram.mtproto.model.DataCenter;
 import de.haw.eventalert.source.telegram.api.auth.TelegramAuthStorage;
 import de.haw.eventalert.source.telegram.api.auth.TelegramAuthentication;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.flink.shaded.com.google.common.base.Splitter;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class TelegramAuthenticationFileUtil {
 
-    private static final Charset AUTH_FILE_CHARSET = StandardCharsets.UTF_8;
+    private static final Charset AUTH_FILE_CHARSET = Charsets.UTF_8;
     private static final char SPLIT_CHAR = ':';
 
     /**
@@ -33,12 +33,12 @@ public class TelegramAuthenticationFileUtil {
         String dataContent = telegramAuthentication.getDataCenter().getIp() + SPLIT_CHAR
                 + telegramAuthentication.getDataCenter().getPort() + SPLIT_CHAR
                 + Base64.getEncoder().encodeToString(telegramAuthentication.getAuthKey());
-        FileUtils.writeStringToFile(filePath.toFile(), dataContent);
+        FileUtils.writeStringToFile(filePath.toFile(), dataContent, AUTH_FILE_CHARSET);
     }
 
     //TODO javadoc
     public static TelegramAuthentication readFromFile(Path filePath) throws IOException {
-        String content = FileUtils.readFileToString(filePath.toFile());
+        String content = FileUtils.readFileToString(filePath.toFile(), AUTH_FILE_CHARSET);
         List<String> contentSplit = Splitter.on(SPLIT_CHAR).limit(3).splitToList(content);
         DataCenter dataCenter = new DataCenter(contentSplit.get(0), Integer.parseInt(contentSplit.get(1)));
         byte[] authKeyBytes = Base64.getDecoder().decode(contentSplit.get(2));
