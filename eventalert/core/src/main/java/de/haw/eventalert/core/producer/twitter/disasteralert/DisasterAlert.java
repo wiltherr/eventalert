@@ -1,4 +1,4 @@
-package de.haw.eventalert.core.producer.twitter.deasasteralert;
+package de.haw.eventalert.core.producer.twitter.disasteralert;
 
 public class DisasterAlert {
     public static final String EVENT_TYPE = "DisasterAlert";

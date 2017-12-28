@@ -1,4 +1,4 @@
-package de.haw.eventalert.core.producer.twitter.deasasteralert;
+package de.haw.eventalert.core.producer.twitter.disasteralert;
 
 import com.twitter.hbc.core.endpoint.Location;
 import de.haw.eventalert.core.global.AlertEvents;
@@ -20,10 +20,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * example flink job with {@link TwitterSourceBuilder} and {@link TwitterSourceUtil}
+ * Hamburg {@link DisasterAlert} producer for EventAlert
  * <p>
- * the job get all german tweets with keywords hamburg or #hamburg and tweets that are tweeted in geolocation Hamburg.
- * the tweets will be converted to alertEvents and emitted to EventAlert
+ *     This job will emit a {@link DisasterAlert} to EventAlert when some disaster keywords are tweeted
  */
 public class HamburgDisasterAlertEventProducer {
     private static final Logger LOG = LoggerFactory.getLogger(HamburgDisasterAlertEventProducer.class);
