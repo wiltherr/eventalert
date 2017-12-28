@@ -25,7 +25,6 @@ public class EMailSource implements SourceFunction<MailMessage> {
 
     public EMailSource(EMailSourceConfiguration sourceConfiguration) {
         this.client = EMailClients.createImap();
-        //TODO protocol in die property, vielleicht auch einfach die javax properties übernhmen?
         this.client.setConfiguration(sourceConfiguration);
     }
 
@@ -40,9 +39,4 @@ public class EMailSource implements SourceFunction<MailMessage> {
     public void cancel() {
         client.cancel();
     }
-
-//    private Stream<Message> getNewMessages() throws IOException {
-//        client.
-//    }
-//TODO message als stream?!
 }

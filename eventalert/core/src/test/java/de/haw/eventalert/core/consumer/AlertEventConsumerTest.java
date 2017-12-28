@@ -125,7 +125,6 @@ class AlertEventConsumerTest {
                 .addSink(new FilterRuleSink());
         env.execute();
 
-
         //ensure only the filter with highest priority (TEST_FILTER_VALID_1) is in collectedList
         //throw exception instead of assertion test, so the test can be repeated
         if (FilterRuleSink.collectedEvents.size() != 1 || !FilterRuleSink.collectedEvents.get(0).equals(TEST_FILTER_VALID_1)) {

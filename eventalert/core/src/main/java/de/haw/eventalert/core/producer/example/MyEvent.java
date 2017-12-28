@@ -1,7 +1,7 @@
 package de.haw.eventalert.core.producer.example;
 
 /**
- * Created by Tim on 01.11.2017.
+ * example event for {@link ExampleProducerJob}
  */
 public class MyEvent {
     private String myField1;

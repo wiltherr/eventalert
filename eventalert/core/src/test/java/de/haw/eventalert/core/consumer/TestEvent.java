@@ -13,7 +13,9 @@ public class TestEvent {
     }
 
     public static TestEvent create(Integer number) {
-        return new TestEvent("testEvent" + number + "Value1", "testEvent" + number + "Value2", "testEvent" + number + "Value3");
+        return new TestEvent("testEvent" + number + "Value1",
+                "testEvent" + number + "Value2",
+                "testEvent" + number + "Value3");
     }
 
     public String getField1() {

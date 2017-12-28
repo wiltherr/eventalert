@@ -34,6 +34,7 @@ class ActionSinkTest {
                 .addSink(new ActionSink());
         env.execute();
 
+        //assert that the all actions were executed
         assertEquals(actionList.size(), TestAction.actionRunCounter.get());
     }
 

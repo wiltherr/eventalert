@@ -5,7 +5,7 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Tim on 01.11.2017.
+ * example source function for {@link ExampleProducerJob}
  */
 public class MyEventSource implements SourceFunction<MyEvent> {
     private boolean stop = false;
