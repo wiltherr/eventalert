@@ -29,6 +29,7 @@ import java.util.stream.Stream;
  * vorlage: http://www.programcreek.com/java-api-examples/index.php?source_dir=tradeframework-master/event-trader/src/main/java/com/jgoetsch/eventtrader/source/IMAPMsgSource.java
  */
 public class EMailImapClient implements EMailClient {
+    public static boolean IS_UNIT_TEST = false; //workaround for testing with greenmail
 
     private static final Logger LOG = LoggerFactory.getLogger(EMailImapClient.class);
     private static final int CONNECT_RETRY_COUNT_MAX = 5;
@@ -92,7 +93,13 @@ public class EMailImapClient implements EMailClient {
         while (isRunning) { //TODO stable connection that don't close automatically when no new messages are received
             if (!store.isConnected() || !folder.isOpen())
                 reconnect();
-            //folder.idle(); TODO this is not supported by greenMail. but maybe its not needed either?
+            if (!IS_UNIT_TEST) { //workaround for testing with greenMail
+                try {
+                    folder.idle(); //TODO this is not supported by greenMail.
+                } catch (MessagingException e) {
+                    throw new ConnectionFailedException("folder idle failed");
+                }
+            }
         }
         LOG.info("Client stopped.");
     }

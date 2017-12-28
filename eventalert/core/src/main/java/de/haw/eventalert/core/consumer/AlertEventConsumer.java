@@ -72,8 +72,14 @@ public class AlertEventConsumer {
                             case ENDWITH:
                                 match = fieldValue.endsWith(pattern);
                                 break;
-                            case REGEX: //TODO not supported
+                            case REGEX:
                                 match = fieldValue.matches(pattern);
+                                break;
+                            case LESS_THAN:
+                                match = Integer.valueOf(fieldValue) < Integer.valueOf(pattern);
+                                break;
+                            case GREATER_THAN:
+                                match = Integer.valueOf(fieldValue) > Integer.valueOf(pattern);
                                 break;
                         }
 

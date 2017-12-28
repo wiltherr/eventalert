@@ -43,7 +43,7 @@ public class LEDManager {
         } catch (LEDEventTypeNotSupportedException e) {
             LOG.error("ledEvent type={} is not supported by connector {}", e.getEvent().getType(), ledEvent.getTargetLEDId(), e);
         } catch (Exception e) {
-            LOG.error("error in connector {}", ledEvent.getTargetLEDId());
+            LOG.error("error in connector {}", ledEvent.getTargetLEDId(), e);
         }
 
     }

@@ -4,6 +4,7 @@ import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import de.haw.eventalert.source.email.client.imap.EMailImapClient;
 import de.haw.eventalert.source.email.entity.MailMessage;
 import de.haw.eventalert.source.email.test.SimpleTestJobThread;
 import de.haw.eventalert.source.email.test.TestUtil;
@@ -31,6 +32,7 @@ public class EMailSourceTest {
 
     @BeforeAll
     static void setUpAll() throws InterruptedException {
+        EMailImapClient.IS_UNIT_TEST = true; //workaround for testing with greenmail
         greenMail.start();
         testJob.start();
         TimeUnit.SECONDS.sleep(2); //wait 2 seconds, so the job can be started

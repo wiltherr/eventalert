@@ -3,6 +3,7 @@ package de.haw.eventalert.source.email.client;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.user.GreenMailUser;
 import com.icegreen.greenmail.util.*;
+import de.haw.eventalert.source.email.client.imap.EMailImapClient;
 import de.haw.eventalert.source.email.configuration.EMailSourceConfiguration;
 import de.haw.eventalert.source.email.entity.MailMessage;
 import de.haw.eventalert.source.email.test.TestUtil;
@@ -51,6 +52,7 @@ public class EMailClientsTest {
     }
 
     private void initClient(EMailClient eMailClient, AbstractServer greenMailServer) {
+        EMailImapClient.IS_UNIT_TEST = true; //workaround for testing with greenmail
         eMailTestClient = new EMailTestClient(eMailClient);
         Properties props = TestUtil.generateEMailSourceProperties(greenMailServer, greenMailUser);
         eMailTestClient.setConfiguration(EMailSourceConfiguration.fromProperties(props));
