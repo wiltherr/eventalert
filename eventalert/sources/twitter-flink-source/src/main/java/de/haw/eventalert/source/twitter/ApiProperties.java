@@ -6,7 +6,7 @@ import java.util.Properties;
 public class ApiProperties {
     public static final Properties apiProperties;
     /**
-     * file name of telegram api configuration
+     * file name of twitter api configuration
      */
     private static final String TWITTER_API_PROPERTY_FILE_PATH = "twitter-api.properties";
 
@@ -19,7 +19,7 @@ public class ApiProperties {
         }
     }
 
-    private static ClassLoader getClassLoader() {
+    static ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 }
