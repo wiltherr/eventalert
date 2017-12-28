@@ -10,7 +10,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import java.util.Properties;
 
 /**
- * util class for producing {@link AlertEvent} streams to Kafka
+ * Util class for producing {@link AlertEvent} streams to Kafka
  */
 public class AlertEventProducer {
 

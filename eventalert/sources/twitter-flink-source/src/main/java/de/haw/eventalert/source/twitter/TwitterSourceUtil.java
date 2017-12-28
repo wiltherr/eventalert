@@ -42,7 +42,7 @@ public class TwitterSourceUtil {
      * count number of tweets in the given {@link WindowAssigner time window}
      *
      * @param tweetDataStream data stream of {@link Tweet}
-     * @param windowAssigner  time window to count (you can only use windows of processing time
+     * @param windowAssigner  time window to count (you can only use windows of processing time)
      * @return number of tweets in the given windowAssigner
      */
     public static DataStream<Long> countTweets(DataStream<Tweet> tweetDataStream, WindowAssigner<Object, TimeWindow> windowAssigner) {

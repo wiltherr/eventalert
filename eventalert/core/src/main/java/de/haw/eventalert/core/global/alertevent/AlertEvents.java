@@ -60,7 +60,7 @@ public class AlertEvents {
     /**
      * {@link FlatMapFunction} that converts a stream of {@link AlertEvent} to its json representation
      *
-     * @return a stream of json representations as string
+     * @return a {@link FlatMapFunction}
      * @see #toJSONString(AlertEvent)
      */
     public static FlatMapFunction<AlertEvent, String> convertToJSONString() {
@@ -76,7 +76,7 @@ public class AlertEvents {
     /**
      * {@link FlatMapFunction} that converts a stream of alertEvent json strings to its object representation
      *
-     * @return a stream of alertEvent objects
+     * @return a {@link FlatMapFunction}
      * @see #toAlertEvent(String)
      */
     public static FlatMapFunction<String, AlertEvent> convertToAlertEvent() {

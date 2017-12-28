@@ -62,6 +62,6 @@ public class HamburgDisasterAlertEventProducer {
 
         DataStream<AlertEvent> alertEventStream = disasterAlertStream.map(disasterAlert -> AlertEvents.createEvent(DisasterAlert.EVENT_TYPE, disasterAlert));
         AlertEventProducer.createAlertEventProducer(alertEventStream);
-        environment.execute();
+        environment.execute("HamburgDisasterAlertEventProducer");
     }
 }
