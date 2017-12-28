@@ -5,7 +5,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Created by Tim on 12.09.2017.
+ * simple implementation of {@link FilterRule} interface
+ * @see FilterRule
  */
 public class SimpleFilterRule implements FilterRule {
 
@@ -23,6 +24,9 @@ public class SimpleFilterRule implements FilterRule {
         this.priority = priority;
     }
 
+    /**
+     * @see FilterRule#getEventType()
+     */
     @Override
     public String getEventType() {
         return eventType;
@@ -32,6 +36,9 @@ public class SimpleFilterRule implements FilterRule {
         this.eventType = eventType;
     }
 
+    /**
+     * @see FilterRule#getFieldName()
+     */
     @Override
     public String getFieldName() {
         return fieldName;
@@ -41,6 +48,9 @@ public class SimpleFilterRule implements FilterRule {
         this.fieldName = fieldName;
     }
 
+    /**
+     * @see FilterRule#getCondition()
+     */
     @Override
     public Condition getCondition() {
         return condition;
@@ -50,8 +60,10 @@ public class SimpleFilterRule implements FilterRule {
         this.condition = condition;
     }
 
+    /**
+     * @see FilterRule#getAction()
+     */
     @Override
-
     public Action getAction() {
         return action;
     }
@@ -60,6 +72,9 @@ public class SimpleFilterRule implements FilterRule {
         this.action = action;
     }
 
+    /**
+     * @see FilterRule#getPriority()
+     */
     @Override
     public int getPriority() {
         return priority;

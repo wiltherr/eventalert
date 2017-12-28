@@ -1,27 +1,44 @@
 package de.haw.eventalert.core.consumer.filter;
 
+import de.haw.eventalert.core.consumer.filter.manager.FilterRuleManager;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 
 /**
- * Created by Tim on 13.09.2017.
+ * Condition that has to be fulfilled for a {@link FilterRule} match.
+ * is used by {@link de.haw.eventalert.core.consumer.AlertEventConsumer}.
  */
 public class Condition implements Serializable {
     private Type type;
-
     private String pattern;
 
+    /**
+     * create a new condition
+     *
+     * @param type    the type of the condition (see {@link Condition.Type})
+     * @param pattern pattern to fulfill the condition (can be regex-pattern, string or number)
+     */
     public Condition(Type type, String pattern) {
         this.type = type;
         this.pattern = pattern;
     }
 
+    /**
+     * the type of the condition.
+     *
+     * @return
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * the pattern to fulfill the condition
+     *
+     * @return
+     */
     public String getPattern() {
         return pattern;
     }
@@ -32,15 +49,6 @@ public class Condition implements Serializable {
                 .append(type)
                 .append(pattern)
                 .toHashCode();
-    }
-
-    public enum Type {
-        CONTAINS,
-        STARTWITH,
-        ENDWITH,
-        LESS_THAN,
-        GREATER_THAN,
-        REGEX
     }
 
     @Override
@@ -63,5 +71,18 @@ public class Condition implements Serializable {
                 .append(type, condition.type)
                 .append(pattern, condition.pattern)
                 .isEquals();
+    }
+
+    /**
+     * available condition types.
+     * are used by {@link de.haw.eventalert.core.consumer.AlertEventConsumer#collectMatchingFilters(FilterRuleManager)}
+     */
+    public enum Type {
+        CONTAINS,
+        STARTWITH,
+        ENDWITH,
+        LESS_THAN,
+        GREATER_THAN,
+        REGEX
     }
 }

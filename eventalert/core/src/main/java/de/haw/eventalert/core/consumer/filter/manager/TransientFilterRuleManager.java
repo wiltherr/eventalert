@@ -9,7 +9,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Created by Tim on 12.09.2017.
+ * transient implementation of {@link FilterRuleManager} interface
+ * <p>
+ *     note: no filter rule will be persisted!
+ *     its necessary to add all {@link FilterRule}s again after restart the application
  */
 public class TransientFilterRuleManager implements FilterRuleManager {
 
@@ -21,17 +24,32 @@ public class TransientFilterRuleManager implements FilterRuleManager {
         allFilters = new HashMap<>();
     }
 
+    /**
+     * adds a {@link FilterRule} to filter this {@link FilterRuleManager}
+     *
+     * @param filterRule filter rule you want to add
+     */
     public void addFilter(FilterRule filterRule) {
         allFilters.computeIfAbsent(filterRule.getEventType(), value -> Lists.newArrayList());
         allFilters.get(filterRule.getEventType()).add(filterRule);
     }
 
+    /**
+     * returns all exisitng {@link FilterRule} in {@link TransientFilterRuleManager}
+     * <p>
+     *     note: use this method only if really needed.
+     *     see if you can use {@link #getAllFiltersForEventType(String)} or {@link #getFilters(String, String)} instead
+     * @return a list of all existing {@link FilterRule}s
+     */
     public List<FilterRule> getAllFilters() {
         List<FilterRule> result = Lists.newArrayList();
         allFilters.values().forEach(result::addAll);
         return result;
     }
 
+    /**
+     * @see FilterRuleManager#getAllFiltersForEventType(String)
+     */
     @Override
     public List<FilterRule> getAllFiltersForEventType(String eventType) {
         if (!hasFilters(eventType)) {
@@ -41,13 +59,19 @@ public class TransientFilterRuleManager implements FilterRuleManager {
         return allFilters.get(eventType);
     }
 
+    /**
+     * @see FilterRuleManager#getFilters(String, String)
+     */
     @Override
-    public Stream<FilterRule> getFilters(String eventType, String filterFieldName) {
-        Objects.requireNonNull(filterFieldName);
+    public Stream<FilterRule> getFilters(String eventType, String fieldName) {
+        Objects.requireNonNull(fieldName);
         return getAllFiltersForEventType(eventType).stream()
-                .filter(filterRule -> filterFieldName.equals(filterRule.getFieldName()));
+                .filter(filterRule -> fieldName.equals(filterRule.getFieldName()));
     }
 
+    /**
+     * @see FilterRuleManager#hasFilters(String)
+     */
     @Override
     public boolean hasFilters(String eventType) {
         return allFilters.get(eventType) != null;
