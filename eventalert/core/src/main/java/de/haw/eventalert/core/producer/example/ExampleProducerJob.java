@@ -1,7 +1,7 @@
 package de.haw.eventalert.core.producer.example;
 
-import de.haw.eventalert.core.global.AlertEvents;
-import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvents;
 import de.haw.eventalert.core.producer.AlertEventProducer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;

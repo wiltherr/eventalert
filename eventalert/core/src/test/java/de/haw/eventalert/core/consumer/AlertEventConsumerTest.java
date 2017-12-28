@@ -5,7 +5,7 @@ import de.haw.eventalert.core.consumer.filter.Condition;
 import de.haw.eventalert.core.consumer.filter.FilterRule;
 import de.haw.eventalert.core.consumer.filter.SimpleFilterRule;
 import de.haw.eventalert.core.consumer.filter.manager.TransientFilterRuleManager;
-import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvent;
 import de.haw.eventalert.core.test.TestEvent;
 import io.github.artsok.RepeatedIfExceptionsTest;
 import org.apache.flink.shaded.com.google.common.collect.Lists;

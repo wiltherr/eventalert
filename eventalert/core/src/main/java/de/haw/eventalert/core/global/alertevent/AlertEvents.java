@@ -1,7 +1,6 @@
-package de.haw.eventalert.core.global;
+package de.haw.eventalert.core.global.alertevent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.haw.eventalert.core.global.entity.event.AlertEvent;
 import de.haw.eventalert.core.global.util.Utils;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.slf4j.Logger;
@@ -21,7 +20,7 @@ public class AlertEvents {
     private static final Logger LOG = LoggerFactory.getLogger(AlertEvents.class);
 
     /**
-     * creates a new alertEvent of any POJO object
+     * creates a new alertEvent of any POJO
      * <p>
      * note: the original object will be converted to json.
      * the {@link com.fasterxml.jackson.databind.ObjectMapper} will need the original object to implement

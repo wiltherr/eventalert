@@ -1,7 +1,8 @@
 package de.haw.eventalert.core.global;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvents;
 import de.haw.eventalert.core.test.TestEvent;
 import org.apache.flink.shaded.com.google.common.collect.Lists;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;

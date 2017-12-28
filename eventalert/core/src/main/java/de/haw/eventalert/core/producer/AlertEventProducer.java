@@ -1,8 +1,8 @@
 package de.haw.eventalert.core.producer;
 
-import de.haw.eventalert.core.global.AlertEvents;
 import de.haw.eventalert.core.global.EventAlertConst;
-import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvents;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;

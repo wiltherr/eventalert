@@ -3,7 +3,7 @@ package de.haw.eventalert.core.consumer;
 import de.haw.eventalert.core.consumer.action.ActionSink;
 import de.haw.eventalert.core.consumer.filter.FilterRule;
 import de.haw.eventalert.core.consumer.filter.manager.TransientFilterRuleManager;
-import de.haw.eventalert.core.global.AlertEvents;
+import de.haw.eventalert.core.global.alertevent.AlertEvents;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;

@@ -3,7 +3,7 @@ package de.haw.eventalert.core.consumer;
 import de.haw.eventalert.core.consumer.filter.FilterRule;
 import de.haw.eventalert.core.consumer.filter.manager.FilterRuleManager;
 import de.haw.eventalert.core.global.EventAlertConst;
-import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvent;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;

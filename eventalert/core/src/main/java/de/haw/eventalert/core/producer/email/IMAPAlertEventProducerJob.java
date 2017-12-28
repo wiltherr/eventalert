@@ -1,7 +1,7 @@
 package de.haw.eventalert.core.producer.email;
 
-import de.haw.eventalert.core.global.AlertEvents;
-import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvent;
+import de.haw.eventalert.core.global.alertevent.AlertEvents;
 import de.haw.eventalert.core.producer.AlertEventProducer;
 import de.haw.eventalert.source.email.EMailSource;
 import de.haw.eventalert.source.email.entity.MailMessage;
