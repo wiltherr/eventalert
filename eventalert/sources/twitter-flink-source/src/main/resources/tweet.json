@@ -1,0 +1,192 @@
+{
+  "created_at": "Thu Dec 28 00:05:01 +0000 2017",
+  "id": 946170081477910533,
+  "id_str": "946170081477910533",
+  "text": "RT @tagesschau: - Ein sechsj\u00e4hriges M\u00e4dchen\n- Ein geschenktes Handy zu Weihnachten\n- 19 Notrufe bei der Polizei - Hier die entsprechende Na\u2026",
+  "source": "\u003ca href=\"http:\/\/twitter.com\/download\/iphone\" rel=\"nofollow\"\u003eTwitter for iPhone\u003c\/a\u003e",
+  "truncated": false,
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 20941499,
+    "id_str": "20941499",
+    "name": "Martin",
+    "screen_name": "macwinnie",
+    "location": "13",
+    "url": null,
+    "description": "B.Sc. || Informatik+Mathe || BlackMamba || 27 || \u26a3 || \u00bbkocht nicht, zelebriert Lebensmittel\u00ab Hier privat. || 3431",
+    "translator_type": "none",
+    "protected": false,
+    "verified": false,
+    "followers_count": 840,
+    "friends_count": 451,
+    "listed_count": 88,
+    "favourites_count": 55109,
+    "statuses_count": 70355,
+    "created_at": "Sun Feb 15 22:03:45 +0000 2009",
+    "utc_offset": 3600,
+    "time_zone": "Berlin",
+    "geo_enabled": true,
+    "lang": "en",
+    "contributors_enabled": false,
+    "is_translator": false,
+    "profile_background_color": "000000",
+    "profile_background_image_url": "http:\/\/abs.twimg.com\/images\/themes\/theme5\/bg.gif",
+    "profile_background_image_url_https": "https:\/\/abs.twimg.com\/images\/themes\/theme5\/bg.gif",
+    "profile_background_tile": false,
+    "profile_link_color": "0F4F73",
+    "profile_sidebar_border_color": "000000",
+    "profile_sidebar_fill_color": "000000",
+    "profile_text_color": "000000",
+    "profile_use_background_image": false,
+    "profile_image_url": "http:\/\/pbs.twimg.com\/profile_images\/829151442145521665\/PxjWHuAa_normal.jpg",
+    "profile_image_url_https": "https:\/\/pbs.twimg.com\/profile_images\/829151442145521665\/PxjWHuAa_normal.jpg",
+    "profile_banner_url": "https:\/\/pbs.twimg.com\/profile_banners\/20941499\/1469379443",
+    "default_profile": false,
+    "default_profile_image": false,
+    "following": null,
+    "follow_request_sent": null,
+    "notifications": null
+  },
+  "geo": null,
+  "coordinates": null,
+  "place": null,
+  "contributors": null,
+  "retweeted_status": {
+    "created_at": "Tue Dec 26 20:22:30 +0000 2017",
+    "id": 945751698747936769,
+    "id_str": "945751698747936769",
+    "text": "- Ein sechsj\u00e4hriges M\u00e4dchen\n- Ein geschenktes Handy zu Weihnachten\n- 19 Notrufe bei der Polizei - Hier die entsprec\u2026 https:\/\/t.co\/JVXgIfpQlx",
+    "source": "\u003ca href=\"https:\/\/about.twitter.com\/products\/tweetdeck\" rel=\"nofollow\"\u003eTweetDeck\u003c\/a\u003e",
+    "truncated": true,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 5734902,
+      "id_str": "5734902",
+      "name": "tagesschau",
+      "screen_name": "tagesschau",
+      "location": "Hamburg",
+      "url": "http:\/\/www.tagesschau.de",
+      "description": "Die Nachrichten der ARD",
+      "translator_type": "none",
+      "protected": false,
+      "verified": true,
+      "followers_count": 2355674,
+      "friends_count": 294,
+      "listed_count": 7988,
+      "favourites_count": 3536,
+      "statuses_count": 152462,
+      "created_at": "Thu May 03 08:42:42 +0000 2007",
+      "utc_offset": 3600,
+      "time_zone": "Berlin",
+      "geo_enabled": true,
+      "lang": "de",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "5985DF",
+      "profile_background_image_url": "http:\/\/pbs.twimg.com\/profile_background_images\/663561494\/77vatey16iwy2tclqmpx.png",
+      "profile_background_image_url_https": "https:\/\/pbs.twimg.com\/profile_background_images\/663561494\/77vatey16iwy2tclqmpx.png",
+      "profile_background_tile": true,
+      "profile_link_color": "0000FF",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "E2EBF7",
+      "profile_text_color": "00044B",
+      "profile_use_background_image": true,
+      "profile_image_url": "http:\/\/pbs.twimg.com\/profile_images\/531688614640365568\/U84uXoIT_normal.png",
+      "profile_image_url_https": "https:\/\/pbs.twimg.com\/profile_images\/531688614640365568\/U84uXoIT_normal.png",
+      "profile_banner_url": "https:\/\/pbs.twimg.com\/profile_banners\/5734902\/1505920967",
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": null,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "is_quote_status": false,
+    "extended_tweet": {
+      "full_text": "- Ein sechsj\u00e4hriges M\u00e4dchen\n- Ein geschenktes Handy zu Weihnachten\n- 19 Notrufe bei der Polizei - Hier die entsprechende Nachricht zu Weihnachten: \nhttps:\/\/t.co\/6BAdrtyC7F",
+      "display_text_range": [
+        0,
+        171
+      ],
+      "entities": {
+        "hashtags": [],
+        "urls": [
+          {
+            "url": "https:\/\/t.co\/6BAdrtyC7F",
+            "expanded_url": "http:\/\/www.sr.de\/sr\/home\/nachrichten\/panorama\/Kind_Handy_Notruf100.html",
+            "display_url": "sr.de\/sr\/home\/nachri\u2026",
+            "indices": [
+              148,
+              171
+            ]
+          }
+        ],
+        "user_mentions": [],
+        "symbols": []
+      }
+    },
+    "quote_count": 7,
+    "reply_count": 31,
+    "retweet_count": 58,
+    "favorite_count": 107,
+    "entities": {
+      "hashtags": [],
+      "urls": [
+        {
+          "url": "https:\/\/t.co\/JVXgIfpQlx",
+          "expanded_url": "https:\/\/twitter.com\/i\/web\/status\/945751698747936769",
+          "display_url": "twitter.com\/i\/web\/status\/9\u2026",
+          "indices": [
+            117,
+            140
+          ]
+        }
+      ],
+      "user_mentions": [],
+      "symbols": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "filter_level": "low",
+    "lang": "de"
+  },
+  "is_quote_status": false,
+  "quote_count": 0,
+  "reply_count": 0,
+  "retweet_count": 0,
+  "favorite_count": 0,
+  "entities": {
+    "hashtags": [],
+    "urls": [],
+    "user_mentions": [
+      {
+        "screen_name": "tagesschau",
+        "name": "tagesschau",
+        "id": 5734902,
+        "id_str": "5734902",
+        "indices": [
+          3,
+          14
+        ]
+      }
+    ],
+    "symbols": []
+  },
+  "favorited": false,
+  "retweeted": false,
+  "filter_level": "low",
+  "lang": "de",
+  "timestamp_ms": "1514419501071"
+}
