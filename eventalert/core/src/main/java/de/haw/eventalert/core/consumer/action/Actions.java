@@ -5,7 +5,7 @@ import de.haw.eventalert.core.consumer.action.ledevent.LEDEventAction;
 import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
 
 /**
- * Created by Tim on 12.09.2017.
+ * factory class for {@link Action} interface
  */
 public class Actions {
     public static Action createMyAction() {

@@ -13,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * This class is used for producing {@link LEDEvent}s to Kafka.
+ * {@link LEDEvent}s will be executed by the ledbridge ({@link de.haw.eventalert.ledbridge.core.LEDManager})
+ */
 class LEDEventProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LEDEventProducer.class);
     private static final String KAFKA_BROKER = EventAlertConst.KAFA_BROKER; //TODO make kafka broker configurable (has to be the same as in LEDEventConsumer)
@@ -44,6 +48,11 @@ class LEDEventProducer {
         return instance;
     }
 
+    /**
+     * will be executed by {@link LEDEventAction} when the action is executed
+     *
+     * @param ledEvent a {@link LEDEvent}
+     */
     public void emit(LEDEvent ledEvent) {
         try {
             String jsonString = LEDEventConverter.toJsonString(ledEvent);

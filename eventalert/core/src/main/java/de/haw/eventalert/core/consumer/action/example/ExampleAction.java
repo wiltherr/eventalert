@@ -3,7 +3,7 @@ package de.haw.eventalert.core.consumer.action.example;
 import de.haw.eventalert.core.consumer.action.Action;
 
 /**
- * Created by Tim on 01.11.2017.
+ * Example Action
  */
 public class ExampleAction implements Action {
 

@@ -4,9 +4,9 @@ import de.haw.eventalert.core.consumer.action.Action;
 import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
 
 /**
- * Created by Tim on 12.09.2017.
+ * A LEDEventAction is used to emit a {@link LEDEvent} to Kafka.
  */
-public class LEDEventAction implements Action { //TODO make a real LEDEventAction
+public class LEDEventAction implements Action {
 
     private LEDEvent ledEvent;
 
@@ -16,9 +16,12 @@ public class LEDEventAction implements Action { //TODO make a real LEDEventActio
 
     @Override
     public String getName() {
-        return "ledevent"; //TODO
+        return "ledevent";
     }
 
+    /**
+     * produces the previously defined {@link LEDEvent} to kafka
+     */
     @Override
     public void runAction() {
         LEDEventProducer.getInstance().emit(ledEvent);
