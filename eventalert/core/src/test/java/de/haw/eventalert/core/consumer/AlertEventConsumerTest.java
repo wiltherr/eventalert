@@ -6,6 +6,7 @@ import de.haw.eventalert.core.consumer.filter.FilterRule;
 import de.haw.eventalert.core.consumer.filter.SimpleFilterRule;
 import de.haw.eventalert.core.consumer.filter.manager.TransientFilterRuleManager;
 import de.haw.eventalert.core.global.entity.event.AlertEvent;
+import de.haw.eventalert.core.test.TestEvent;
 import io.github.artsok.RepeatedIfExceptionsTest;
 import org.apache.flink.shaded.com.google.common.collect.Lists;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -27,10 +28,12 @@ import java.util.concurrent.TimeUnit;
  */
 class AlertEventConsumerTest {
 
-    public static final TestEvent TEST_EVENT_2 = TestEvent.create(2);
-    public static final TestEvent TEST_EVENT_3 = TestEvent.create(3);
-    private static final String TEST_EVENT_TYPE = "testEvent";
     private static final TestEvent TEST_EVENT_1 = TestEvent.create(1);
+    private static final TestEvent TEST_EVENT_2 = TestEvent.create(2);
+    private static final TestEvent TEST_EVENT_3 = TestEvent.create(3);
+
+    private static final String TEST_EVENT_TYPE = "testEvent";
+
     //filterRule matches with all test events
     private static final FilterRule TEST_FILTER_VALID_1 = new SimpleFilterRule(TEST_EVENT_TYPE, "field1", new Condition(Condition.Type.CONTAINS, "Value1"), null, 5);
     //filterRule matches with all test events

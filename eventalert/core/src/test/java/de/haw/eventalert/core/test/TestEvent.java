@@ -1,6 +1,8 @@
-package de.haw.eventalert.core.consumer;
+package de.haw.eventalert.core.test;
 
 public class TestEvent {
+
+    public static final String EVENT_TYPE = "TestEvent";
 
     private String field1;
     private String field2;
