@@ -11,6 +11,8 @@ Project structure
          </ul>
     </ul>
     <ul>/ledbridge: Bridge to the LED display</ul>
-
+<p>
 Project and all modules can be build with `mvn clean install`, maybe you add `-Dmaven.test.skip=true` to get the build-process work, 
 because some sources needs a previous configuration for testing.    
+
+====== <p>This project can be also found on GitHub under https://github.com/wiltherr/eventalert
