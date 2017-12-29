@@ -2,12 +2,13 @@ package de.haw.eventalert.source.telegram.api;
 
 import com.github.badoualy.telegram.mtproto.model.DataCenter;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 /**
  * Created by Tim on 06.09.2017.
  */
-public class ApiConfiguration {
+public class ApiConfiguration implements Serializable {
 
     private static final String PROPERTY_KEY_API_ID = "telegram.api.id";
     private static final String PROPERTY_KEY_API_HASH = "telegram.api.hash";
@@ -28,7 +29,8 @@ public class ApiConfiguration {
     private String appSystemVersion;
     private String appLangCode;
 
-    private DataCenter defaultDataCenter;
+    private String dataCenterIp;
+    private int dataCenterPort;
 
     private ApiConfiguration(Properties properties) {
         this.apiId = Integer.parseInt(properties.getProperty(PROPERTY_KEY_API_ID));
@@ -37,8 +39,8 @@ public class ApiConfiguration {
         this.appVersion = properties.getProperty(PROPERTY_KEY_APP_VERSION);
         this.appSystemVersion = properties.getProperty(PROPERTY_KEY_APP_SYSTEM_VERSION);
         this.appLangCode = properties.getProperty(PROPERTY_KEY_APP_LANG_CODE);
-
-        this.defaultDataCenter = new DataCenter(properties.getProperty(PROPERTY_KEY_DATA_CENTER_IP), Integer.parseInt(properties.getProperty(PROPERTY_KEY_DATA_CENTER_PORT)));
+        this.dataCenterIp = properties.getProperty(PROPERTY_KEY_DATA_CENTER_IP);
+        this.dataCenterPort = Integer.parseInt(properties.getProperty(PROPERTY_KEY_DATA_CENTER_PORT));
     }
 
     public static ApiConfiguration fromProperties(Properties properties) {
@@ -70,6 +72,6 @@ public class ApiConfiguration {
     }
 
     public DataCenter getDefaultDataCenter() {
-        return defaultDataCenter;
+        return new DataCenter(dataCenterIp, dataCenterPort);
     }
 }

@@ -27,7 +27,7 @@ public class TelegramAuthStorage implements TelegramApiStorage {
     }
 
     public TelegramAuthentication export() {
-        return new TelegramAuthentication(authKeyBytes, dataCenter);
+        return new TelegramAuthentication(authKeyBytes, dataCenter.getIp(), dataCenter.getPort());
     }
 
     public DataCenter getDataCenter() {

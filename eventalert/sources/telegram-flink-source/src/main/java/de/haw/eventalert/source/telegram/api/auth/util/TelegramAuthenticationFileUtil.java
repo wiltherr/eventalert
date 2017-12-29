@@ -1,6 +1,5 @@
 package de.haw.eventalert.source.telegram.api.auth.util;
 
-import com.github.badoualy.telegram.mtproto.model.DataCenter;
 import de.haw.eventalert.source.telegram.api.auth.TelegramAuthStorage;
 import de.haw.eventalert.source.telegram.api.auth.TelegramAuthentication;
 import org.apache.commons.io.Charsets;
@@ -40,8 +39,7 @@ public class TelegramAuthenticationFileUtil {
     public static TelegramAuthentication readFromFile(Path filePath) throws IOException {
         String content = FileUtils.readFileToString(filePath.toFile(), AUTH_FILE_CHARSET);
         List<String> contentSplit = Splitter.on(SPLIT_CHAR).limit(3).splitToList(content);
-        DataCenter dataCenter = new DataCenter(contentSplit.get(0), Integer.parseInt(contentSplit.get(1)));
         byte[] authKeyBytes = Base64.getDecoder().decode(contentSplit.get(2));
-        return new TelegramAuthentication(authKeyBytes, dataCenter);
+        return new TelegramAuthentication(authKeyBytes, contentSplit.get(0), Integer.parseInt(contentSplit.get(1)));
     }
 }

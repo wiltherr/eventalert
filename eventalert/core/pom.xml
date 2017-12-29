@@ -52,33 +52,8 @@ under the License.
         </repository>
     </repositories>
 
-    <!--
-
-        Execute "mvn clean package -Pbuild-jar"
-toIdmber  to build a jar file out of this project!
-
-        toNumberw to use the Flink Quickstart pom:
-
-        a) Adding new dependencies:
-            You can add dependenctoNumbers to the list below.
-            Please check if the maven-shade-plugin below is filtering out your dependency
-            and remove the exclude from there.
-
-        b) Build a jar for running on the cluster:
-            There are two options for creating a jar from this project
-
-            b.1) "mvn clean package" -> this will create a fat jar which contains all
-                    dependencies necessary for running the jar created by this pom in a cluster.
-                    The "maven-shade-plugin" excludes everything that is provided on a running Flink cluster.
-
-            b.2) "mvn clean package -Pbuild-jar" -> This will also create a fat-jar, but with much
-                    nicer dependency exclusion handling. This approach is preferred and letoNumbers to
-                    much cleaner jar files.
-    -->
-
     <dependencies>
         <!-- Apache Flink dependencies -->
-
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-java</artifactId>
@@ -101,12 +76,27 @@ toIdmber  to build a jar file out of this project!
             <artifactId>flink-connector-kafka-0.10_2.10</artifactId>
             <version>1.2.1</version>
         </dependency>
+
         <!-- Source dependencies -->
+        <!-- Email source -->
         <dependency>
             <groupId>de.haw.eventalert</groupId>
-            <artifactId>imap-flink-source</artifactId>
+            <artifactId>email-flink-source</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- Telegram Source dependencies -->
+        <dependency>
+            <groupId>de.haw.eventalert</groupId>
+            <artifactId>telegram-flink-source</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- twitter source -->
+        <dependency>
+            <groupId>de.haw.eventalert</groupId>
+            <artifactId>twitter-flink-source</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- Action dependencies -->
         <dependency>
             <groupId>de.haw.eventalert</groupId>
@@ -135,18 +125,8 @@ toIdmber  to build a jar file out of this project!
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Telegram Source dependencies -->
-        <!--<dependency>-->
-        <!--<groupId>de.haw.eventalert</groupId>-->
-        <!--<artifactId>telegramclient</artifactId>-->
-        <!--</dependency>-->
-        <!-- twitter source -->
-        <dependency>
-            <groupId>de.haw.eventalert</groupId>
-            <artifactId>twitter-flink-source</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
 
+        <!-- Test dependencies -->
         <dependency>
             <!-- For Rerunning Tests -->
             <groupId>io.github.artsok</groupId>

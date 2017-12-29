@@ -14,16 +14,17 @@ import java.util.Properties;
 
 
 /**
- * Created by Tim on 18.08.2017.
+ * This job produces AlertEvents if a new E-Mail is received on IMAP account.
+ * Connection to IMAP account is defined in resources folder
  */
-public class IMAPAlertEventProducerJob {
-    private static final Logger LOG = LoggerFactory.getLogger(IMAPAlertEventProducerJob.class);
+public class EMailAlertEventProducerJob {
+    private static final Logger LOG = LoggerFactory.getLogger(EMailAlertEventProducerJob.class);
 
     public static void main(String[] args) throws Exception {
-        LOG.info("========== IMAPAlertEventProducerJob started ==========");
+        LOG.info("========== EMailAlertEventProducerJob started ==========");
         //load the source configuration
         Properties sourceConf = new Properties();
-        sourceConf.load(IMAPAlertEventProducerJob.class.getClassLoader().getResourceAsStream("timATksit.org.properties"));
+        sourceConf.load(EMailAlertEventProducerJob.class.getClassLoader().getResourceAsStream("timATksit.org.properties"));
         //get the execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
         //create the desired source
@@ -44,7 +45,7 @@ public class IMAPAlertEventProducerJob {
         //Add stream to kafka
         AlertEventProducer.createAlertEventProducer(alertEventDataStream);
 
-        env.execute("IMAPAlertEventProducerJob");
+        env.execute("EMailAlertEventProducerJob");
         env.getConfig().enableObjectReuse();
     }
 }

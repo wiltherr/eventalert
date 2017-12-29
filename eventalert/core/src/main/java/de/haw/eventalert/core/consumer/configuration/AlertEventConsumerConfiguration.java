@@ -10,6 +10,7 @@ import de.haw.eventalert.ledbridge.entity.color.Brightness;
 import de.haw.eventalert.ledbridge.entity.color.Colors;
 import de.haw.eventalert.ledbridge.entity.event.TimedColorEvent;
 import de.haw.eventalert.source.email.entity.MailMessage;
+import de.haw.eventalert.source.telegram.client.TelegramMessageEvent;
 
 /**
  * Class is used to manage currently hardcoded FilterRules.
@@ -22,11 +23,11 @@ public class AlertEventConsumerConfiguration {
         TransientFilterRuleManager manager = new TransientFilterRuleManager();
         //id of the target arduino LED
         long targetLEDId = 0;
-        TimedColorEvent blueLEDEvent = new TimedColorEvent();
-        blueLEDEvent.setColor(Colors.createRGBW(0, 0, 255, 0));
-        blueLEDEvent.setBrightness(Brightness.MAX);
-        blueLEDEvent.setDuration(100);
-        blueLEDEvent.setTargetLEDId(targetLEDId);
+        TimedColorEvent shortLightBlue = new TimedColorEvent();
+        shortLightBlue.setColor(Colors.createRGBW(0, 0, 255, 100));
+        shortLightBlue.setBrightness(Brightness.MAX);
+        shortLightBlue.setDuration(50);
+        shortLightBlue.setTargetLEDId(targetLEDId);
 
         TimedColorEvent redLEDEvent = new TimedColorEvent();
         redLEDEvent.setColor(Colors.createRGBW(255, 0, 0, 0));
@@ -46,8 +47,10 @@ public class AlertEventConsumerConfiguration {
         longRedLEDEvent.setDuration(3600000);
         longRedLEDEvent.setTargetLEDId(targetLEDId);
 
-        manager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(Condition.Type.CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(greenLEDEvent), 0));
-        manager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE, "to", new Condition(Condition.Type.CONTAINS, "wittler"), Actions.createLEDEventAction(redLEDEvent), 0));
+        manager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(Condition.Type.CONTAINS, "tim@ksit.org"), Actions.createLEDEventAction(greenLEDEvent), 1));
+        manager.addFilter(new SimpleFilterRule(MailMessage.EVENT_TYPE, "from", new Condition(Condition.Type.ENDWITH, "tim@gmail.com"), Actions.createLEDEventAction(redLEDEvent), 1));
+        //for telegram currently only telegram user ids and message content is supported. my telegram id is 8563430
+        manager.addFilter(new SimpleFilterRule(TelegramMessageEvent.EVENT_TYPE, "toId", new Condition(Condition.Type.EQUALS, "8563430"), Actions.createLEDEventAction(shortLightBlue), 0));
 
         manager.addFilter(new SimpleFilterRule(DisasterAlert.EVENT_TYPE, "city", new Condition(Condition.Type.CONTAINS, "hamburg"), Actions.createLEDEventAction(longRedLEDEvent),
                 Integer.MAX_VALUE)); //set priority to max integer, for very very important events

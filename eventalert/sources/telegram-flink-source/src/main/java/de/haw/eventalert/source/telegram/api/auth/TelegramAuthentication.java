@@ -2,13 +2,17 @@ package de.haw.eventalert.source.telegram.api.auth;
 
 import com.github.badoualy.telegram.mtproto.model.DataCenter;
 
-public class TelegramAuthentication {
-    private byte[] authKey;
-    private DataCenter dataCenter;
+import java.io.Serializable;
 
-    public TelegramAuthentication(byte[] authKeyBytes, DataCenter dataCenter) {
+public class TelegramAuthentication implements Serializable {
+    private byte[] authKey;
+    private String dataCenterIp;
+    private int dataCenterPort;
+
+    public TelegramAuthentication(byte[] authKeyBytes, String dataCenterIp, int dataCenterPort) {
         this.authKey = authKeyBytes;
-        this.dataCenter = dataCenter;
+        this.dataCenterIp = dataCenterIp;
+        this.dataCenterPort = dataCenterPort;
     }
 
     public byte[] getAuthKey() {
@@ -16,6 +20,6 @@ public class TelegramAuthentication {
     }
 
     public DataCenter getDataCenter() {
-        return dataCenter;
+        return new DataCenter(dataCenterIp, dataCenterPort);
     }
 }

@@ -78,6 +78,7 @@ public class Condition implements Serializable {
      * are used by {@link de.haw.eventalert.core.consumer.AlertEventConsumer#collectMatchingFilters(FilterRuleManager)}
      */
     public enum Type {
+        EQUALS,
         CONTAINS,
         STARTWITH,
         ENDWITH,

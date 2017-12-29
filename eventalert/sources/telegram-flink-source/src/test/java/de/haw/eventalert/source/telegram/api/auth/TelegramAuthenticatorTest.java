@@ -4,6 +4,7 @@ import de.haw.eventalert.source.telegram.api.ApiConfiguration;
 import de.haw.eventalert.source.telegram.api.auth.exception.AuthProcessAlreadyStartedException;
 import de.haw.eventalert.source.telegram.api.auth.exception.PhoneNumberInvalidException;
 import de.haw.eventalert.source.telegram.api.auth.exception.PhoneNumberNullOrEmptyException;
+import de.haw.eventalert.source.telegram.api.exception.FloodErrorException;
 import de.haw.eventalert.source.telegram.api.exception.TelegramApiErrorException;
 import de.haw.eventalert.source.telegram.util.PropertyUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TelegramAuthenticatorTest {
 
@@ -46,8 +48,12 @@ public class TelegramAuthenticatorTest {
         assertThrows(PhoneNumberNullOrEmptyException.class, () -> telegramAuthenticator.startAuthGenerator(""));
         assertThrows(PhoneNumberInvalidException.class, () -> telegramAuthenticator.startAuthGenerator(FAKE_PHONE_NUMBER_INVALID));
 
-        TelegramAuthenticator.AuthGenerator authGenerator = telegramAuthenticator.startAuthGenerator(FAKE_PHONE_NUMBER_VALID);
-        assertThrows(AuthProcessAlreadyStartedException.class, () -> telegramAuthenticator.startAuthGenerator(FAKE_PHONE_NUMBER_VALID));
+        try {
+            TelegramAuthenticator.AuthGenerator authGenerator = telegramAuthenticator.startAuthGenerator(FAKE_PHONE_NUMBER_VALID);
+            assertThrows(AuthProcessAlreadyStartedException.class, () -> telegramAuthenticator.startAuthGenerator(FAKE_PHONE_NUMBER_VALID));
+        } catch (FloodErrorException e) {
+            fail("Flood error while testing! Use a another 'FAKE_PHONE_NUMBER_VALID' or skip test 'TelegramAuthenticatorTest'!", e);
+        }
     }
 
 //    @Test

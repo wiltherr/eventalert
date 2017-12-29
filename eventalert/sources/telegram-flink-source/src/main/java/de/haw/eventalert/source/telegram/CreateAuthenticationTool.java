@@ -1,4 +1,4 @@
-package de.haw.eventalert.source.telegram.tool;
+package de.haw.eventalert.source.telegram;
 
 import de.haw.eventalert.source.telegram.api.ApiConfiguration;
 import de.haw.eventalert.source.telegram.api.auth.TelegramAuthentication;
@@ -12,14 +12,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-public class CreateTestAuthenticationTool {
+public class CreateAuthenticationTool {
 
     public static final String API_AUTH_KEY_FILE_NAME = "telegram-auth.storage";
 
     public static void main(String[] args) throws Exception {
         Path authKeyPath;
-        if (CreateTestAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME) != null) {
-            authKeyPath = Paths.get(CreateTestAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME).toURI());
+        if (CreateAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME) != null) {
+            authKeyPath = Paths.get(CreateAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME).toURI());
         } else {
             throw new Exception("resource path not found");
         }

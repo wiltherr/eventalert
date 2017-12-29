@@ -1,6 +1,5 @@
 package de.haw.eventalert.source.telegram.api.auth.util;
 
-import com.github.badoualy.telegram.mtproto.model.DataCenter;
 import de.haw.eventalert.source.telegram.api.auth.TelegramAuthentication;
 import de.haw.eventalert.source.telegram.test.TestConstants;
 import org.junit.jupiter.api.AfterEach;
@@ -28,7 +27,7 @@ public class TelegramAuthenticationFileUtilTest {
         byte[] testAuthKey = new byte[300];
         new Random().nextBytes(testAuthKey);
 
-        testAuth = new TelegramAuthentication(testAuthKey, new DataCenter("127.0.0.1", 1234));
+        testAuth = new TelegramAuthentication(testAuthKey, "127.0.0.1", 1234);
     }
 
     @AfterEach

@@ -63,6 +63,9 @@ public class AlertEventConsumer {
 
                         //check filter condition matching alertEvent filedValue
                         switch (filter.getCondition().getType()) {
+                            case EQUALS:
+                                match = fieldValue.equals(pattern);
+                                break;
                             case CONTAINS:
                                 match = fieldValue.contains(pattern);
                                 break;

@@ -27,7 +27,6 @@ public class AlertEventConsumerJob {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
         //Get all alert-events
-        DataStream<String> jsonAlertEventStream = env.addSource(AlertEventConsumer.createAlertEventConsumer());
         DataStream<FilterRule> matchingFilterRuleStream = env.addSource(AlertEventConsumer.createAlertEventConsumer())
                 .flatMap(AlertEvents.convertToAlertEvent())
                 .filter(AlertEventConsumer.filterAlertEventsWithFilterRules(filterRuleManager))
