@@ -15,8 +15,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>core</module>
-        <!--<module>sources/telegram-flink-source</module>-->
-        <module>sources/imap-flink-source</module>
+        <module>sources/telegram-flink-source</module>
+        <module>sources/email-flink-source</module>
         <module>sources/twitter-flink-source</module>
     </modules>
 

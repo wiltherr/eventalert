@@ -13,7 +13,7 @@
     </parent>
 
     <name>E-Mail Source for Flink</name>
-    <artifactId>imap-flink-source</artifactId>
+    <artifactId>email-flink-source</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>

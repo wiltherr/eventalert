@@ -39,7 +39,7 @@ public class TelegramAuthenticator {
         //create new tgAuthStorage
         tgAuthStorage = new TelegramAuthStorage();
         //create new client
-        tgClient = Kotlogram.getDefaultClient(tgApp, tgAuthStorage, apiConf.getDefaultDataCenter());
+        tgClient = Kotlogram.getDefaultClient(tgApp, tgAuthStorage);
     }
 
     /**

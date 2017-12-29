@@ -29,11 +29,10 @@ import java.util.stream.Stream;
  * vorlage: http://www.programcreek.com/java-api-examples/index.php?source_dir=tradeframework-master/event-trader/src/main/java/com/jgoetsch/eventtrader/source/IMAPMsgSource.java
  */
 public class EMailImapClient implements EMailClient {
-    public static boolean IS_UNIT_TEST = false; //workaround for testing with greenmail
-
     private static final Logger LOG = LoggerFactory.getLogger(EMailImapClient.class);
     private static final int CONNECT_RETRY_COUNT_MAX = 5;
     private static final long CONNECT_RETRY_WAIT_MS = 1500;
+    public static boolean IS_UNIT_TEST = false; //workaround for testing with greenmail
     private final Object waitStartupMonitor = new Object[0]; //wait object has to be serializable
     private volatile boolean isRunning;
     private String host;

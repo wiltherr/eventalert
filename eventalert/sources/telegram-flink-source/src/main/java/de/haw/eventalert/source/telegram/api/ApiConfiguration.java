@@ -1,17 +1,13 @@
 package de.haw.eventalert.source.telegram.api;
 
 import com.github.badoualy.telegram.mtproto.model.DataCenter;
-import lombok.Builder;
-import lombok.Getter;
 
 import java.util.Properties;
 
 /**
  * Created by Tim on 06.09.2017.
  */
-public @Getter
-@Builder
-class ApiConfiguration {
+public class ApiConfiguration {
 
     private static final String PROPERTY_KEY_API_ID = "telegram.api.id";
     private static final String PROPERTY_KEY_API_HASH = "telegram.api.hash";
@@ -34,18 +30,46 @@ class ApiConfiguration {
 
     private DataCenter defaultDataCenter;
 
+    private ApiConfiguration(Properties properties) {
+        this.apiId = Integer.parseInt(properties.getProperty(PROPERTY_KEY_API_ID));
+        this.apiHash = properties.getProperty(PROPERTY_KEY_API_HASH);
+        this.appModel = properties.getProperty(PROPERTY_KEY_APP_MODEL);
+        this.appVersion = properties.getProperty(PROPERTY_KEY_APP_VERSION);
+        this.appSystemVersion = properties.getProperty(PROPERTY_KEY_APP_SYSTEM_VERSION);
+        this.appLangCode = properties.getProperty(PROPERTY_KEY_APP_LANG_CODE);
+
+        this.defaultDataCenter = new DataCenter(properties.getProperty(PROPERTY_KEY_DATA_CENTER_IP), Integer.parseInt(properties.getProperty(PROPERTY_KEY_DATA_CENTER_PORT)));
+    }
+
     public static ApiConfiguration fromProperties(Properties properties) {
-        ApiConfigurationBuilder builder = ApiConfiguration.builder();
-        builder.apiId(Integer.parseInt(properties.getProperty(PROPERTY_KEY_API_ID)))
-                .apiHash(properties.getProperty(PROPERTY_KEY_API_HASH))
-                .appVersion(properties.getProperty(PROPERTY_KEY_APP_VERSION))
-                .appModel(properties.getProperty(PROPERTY_KEY_APP_MODEL))
-                .appSystemVersion(properties.getProperty(PROPERTY_KEY_APP_SYSTEM_VERSION))
-                .appLangCode(properties.getProperty(PROPERTY_KEY_APP_LANG_CODE));
+        return new ApiConfiguration(properties);
+    }
 
-        DataCenter dataCenter = new DataCenter(properties.getProperty(PROPERTY_KEY_DATA_CENTER_IP), Integer.parseInt(properties.getProperty(PROPERTY_KEY_DATA_CENTER_PORT)));
-        builder.defaultDataCenter(dataCenter);
+    public int getApiId() {
+        return apiId;
+    }
 
-        return builder.build();
+    public String getApiHash() {
+        return apiHash;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public String getAppModel() {
+        return appModel;
+    }
+
+    public String getAppSystemVersion() {
+        return appSystemVersion;
+    }
+
+    public String getAppLangCode() {
+        return appLangCode;
+    }
+
+    public DataCenter getDefaultDataCenter() {
+        return defaultDataCenter;
     }
 }
