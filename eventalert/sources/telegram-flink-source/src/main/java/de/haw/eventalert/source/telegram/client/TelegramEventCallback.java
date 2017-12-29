@@ -15,7 +15,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Created by Tim on 17.09.2017.
+ * callback class for telegram events, to generate events on {@link TelegramEventListener}.
+ * Implementation of the {@link UpdateCallback} interface.
+ * <p>
+ *     note: currently only some updates are supported.
  */
 public class TelegramEventCallback implements UpdateCallback {
 
