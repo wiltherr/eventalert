@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 
-class TelegramAuthenticationFileUtilTest {
+public class TelegramAuthenticationFileUtilTest {
 
     private TelegramAuthentication testAuth;
 
@@ -33,12 +33,12 @@ class TelegramAuthenticationFileUtilTest {
 
     @AfterEach
     public void tearDown() throws IOException {
-        Files.deleteIfExists(testFilePath);
+        //Files.deleteIfExists(testFilePath);
     }
 
     @Test
     void testWithExistingFile() throws IOException {
-        asserTelegramAuthNotEmpty(testAuth);
+        assertTelegramAuthNotEmpty(testAuth);
 
         if (Files.notExists(testFilePath)) {
             Files.createFile(testFilePath);
@@ -48,13 +48,13 @@ class TelegramAuthenticationFileUtilTest {
 
         TelegramAuthentication resultAuth = TelegramAuthenticationFileUtil.readFromFile(testFilePath);
 
-        asserTelegramAuthNotEmpty(resultAuth);
+        assertTelegramAuthNotEmpty(resultAuth);
         assertTelegramAuthEquals(resultAuth, testAuth);
     }
 
     @Test
     void testWithNonExistingFile() throws IOException {
-        asserTelegramAuthNotEmpty(testAuth);
+        assertTelegramAuthNotEmpty(testAuth);
 
         Files.deleteIfExists(testFilePath);
 
@@ -62,11 +62,11 @@ class TelegramAuthenticationFileUtilTest {
 
         TelegramAuthentication resultAuth = TelegramAuthenticationFileUtil.readFromFile(testFilePath);
 
-        asserTelegramAuthNotEmpty(resultAuth);
+        assertTelegramAuthNotEmpty(resultAuth);
         assertTelegramAuthEquals(resultAuth, testAuth);
     }
 
-    private void asserTelegramAuthNotEmpty(TelegramAuthentication telegramAuthStorage) {
+    private void assertTelegramAuthNotEmpty(TelegramAuthentication telegramAuthStorage) {
         Assertions.assertNotNull(telegramAuthStorage.getAuthKey());
         Assertions.assertFalse(telegramAuthStorage.getAuthKey().length == 0);
         Assertions.assertNotNull(telegramAuthStorage.getDataCenter().getIp());

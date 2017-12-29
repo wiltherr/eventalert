@@ -41,6 +41,6 @@ public class RpcErrorHandlerTest {
 
     @Test
     public void testUnspecificApiException() {
-        assertThrows(TelegramApiErrorException.class, () -> RpcErrorHandler.handle(new RpcErrorException(TEST_ERROR_CODE, TEST_ERROR_TAG)));
+        assertTrue(RpcErrorHandler.handle(new RpcErrorException(TEST_ERROR_CODE, TEST_ERROR_TAG)).getClass() == TelegramApiErrorException.class);
     }
 }

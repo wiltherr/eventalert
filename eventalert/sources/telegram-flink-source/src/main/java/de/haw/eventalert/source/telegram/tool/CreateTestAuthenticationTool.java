@@ -1,19 +1,30 @@
-package de.haw.eventalert.source.telegram.test.tool;
+package de.haw.eventalert.source.telegram.tool;
 
 import de.haw.eventalert.source.telegram.api.ApiConfiguration;
 import de.haw.eventalert.source.telegram.api.auth.TelegramAuthentication;
 import de.haw.eventalert.source.telegram.api.auth.tool.CommandLineTelegramAuthenticator;
 import de.haw.eventalert.source.telegram.api.auth.util.TelegramAuthenticationFileUtil;
-import de.haw.eventalert.source.telegram.test.TestConstants;
 import de.haw.eventalert.source.telegram.util.PropertyUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class CreateTestAuthenticationTool {
 
+    public static final String API_AUTH_KEY_FILE_NAME = "telegram-auth.storage";
+
     public static void main(String[] args) throws Exception {
+        Path authKeyPath;
+        if (CreateTestAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME) != null) {
+            authKeyPath = Paths.get(CreateTestAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME).toURI());
+        } else {
+            throw new Exception("resource path not found");
+        }
+
+
         //load api configuration
         ApiConfiguration apiConfiguration;
         try {
@@ -22,7 +33,7 @@ public class CreateTestAuthenticationTool {
             throw new Exception("api property file is missing or cant be load. check the path in PropertyUtil class", e);
         }
 
-        if (Files.exists(TestConstants.TEST_AUTH_KEY_FILE_PATH)) {
+        if (Files.exists(authKeyPath)) {
             System.out.println("Test authentication key file already exists!");
 
             Scanner scanner = new Scanner(System.in);
@@ -44,6 +55,6 @@ public class CreateTestAuthenticationTool {
 
         CommandLineTelegramAuthenticator tool = new CommandLineTelegramAuthenticator(apiConfiguration);
         TelegramAuthentication telegramAuthentication = tool.startCommandLineAuthDialog();
-        TelegramAuthenticationFileUtil.writeToFile(TestConstants.TEST_AUTH_KEY_FILE_PATH, telegramAuthentication);
+        TelegramAuthenticationFileUtil.writeToFile(authKeyPath, telegramAuthentication);
     }
 }
