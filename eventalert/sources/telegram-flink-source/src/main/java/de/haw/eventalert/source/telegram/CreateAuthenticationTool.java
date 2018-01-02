@@ -5,6 +5,7 @@ import de.haw.eventalert.source.telegram.api.auth.TelegramAuthentication;
 import de.haw.eventalert.source.telegram.api.auth.tool.CommandLineTelegramAuthenticator;
 import de.haw.eventalert.source.telegram.api.auth.util.TelegramAuthenticationFileUtil;
 import de.haw.eventalert.source.telegram.util.PropertyUtil;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,16 +15,19 @@ import java.util.Scanner;
 
 public class CreateAuthenticationTool {
 
-    public static final String API_AUTH_KEY_FILE_NAME = "telegram-auth.storage";
+    public static final String DEFAULT_API_AUTH_KEY_FILE_NAME = "default-telegram-auth.storage";
 
     public static void main(String[] args) throws Exception {
         Path authKeyPath;
-        if (CreateAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME) != null) {
-            authKeyPath = Paths.get(CreateAuthenticationTool.class.getClassLoader().getResource(API_AUTH_KEY_FILE_NAME).toURI());
+        if (StringUtils.isBlank(args[0])) {
+            if (CreateAuthenticationTool.class.getClassLoader().getResource(DEFAULT_API_AUTH_KEY_FILE_NAME) != null) {
+                authKeyPath = Paths.get(CreateAuthenticationTool.class.getClassLoader().getResource(DEFAULT_API_AUTH_KEY_FILE_NAME).toURI());
+            } else {
+                throw new Exception("resource path not found");
+            }
         } else {
-            throw new Exception("resource path not found");
+            authKeyPath = Paths.get(args[0]);
         }
-
 
         //load api configuration
         ApiConfiguration apiConfiguration;

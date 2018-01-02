@@ -16,22 +16,33 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
+import static de.haw.eventalert.source.telegram.CreateAuthenticationTool.DEFAULT_API_AUTH_KEY_FILE_NAME;
+
 public class TelegramSource implements SourceFunction<TelegramMessageEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramSource.class);
 
     private TelegramUpdateClient telegramUpdateClient;
 
     public TelegramSource() {
+        this(null);
+    }
+
+    public TelegramSource(TelegramAuthentication telegramAuthentication) {
+        if (telegramAuthentication == null) {
+            try {
+                telegramAuthentication = TelegramAuthenticationFileUtil.readFromFile(
+                        Paths.get(CreateAuthenticationTool.class.getClassLoader().getResource(DEFAULT_API_AUTH_KEY_FILE_NAME).toURI())
+                );
+            } catch (URISyntaxException | IOException e) {
+                throw new IllegalArgumentException(DEFAULT_API_AUTH_KEY_FILE_NAME + " file can not be found. please check telegram-flink-source readme!", e);
+            }
+        }
+
         try {
             ApiConfiguration apiConf = ApiConfiguration.fromProperties(PropertyUtil.getApiProperties());
-            TelegramAuthentication telegramAuthentication = TelegramAuthenticationFileUtil.readFromFile(
-                    Paths.get(CreateAuthenticationTool.class.getClassLoader().getResource(CreateAuthenticationTool.API_AUTH_KEY_FILE_NAME).toURI())
-            );
             this.telegramUpdateClient = new TelegramUpdateClient(apiConf, telegramAuthentication);
         } catch (IOException e) {
-            throw new IllegalArgumentException("telegram-api.properties can not be found. please check telegram-flink-source readme!");
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("telegram-auth.storage can not be found. please check telegram-flink-source readme!");
+            throw new IllegalArgumentException("telegram-api properties can not be found. please check telegram-flink-source readme!", e);
         }
     }
 
