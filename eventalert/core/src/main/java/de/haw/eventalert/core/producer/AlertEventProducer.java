@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class AlertEventProducer {
 
-    private static final String KAFA_BROKER = EventAlertConst.KAFA_BROKER;
+    private static final String KAFKA_BROKER = EventAlertConst.KAFA_BROKER;
     private static final String KAFKA_TOPIC = EventAlertConst.KAFKA_TOPIC_ALERTEVENT;
 
     /**
@@ -32,7 +32,7 @@ public class AlertEventProducer {
 
     private static void createAlertEventJsonProducer(DataStream<String> alertEventJSONStreamSource) {
         Properties producerProperties = new Properties();
-        producerProperties.setProperty("bootstrap.servers", KAFA_BROKER);
+        producerProperties.setProperty("bootstrap.servers", KAFKA_BROKER);
 
         // add source to kafka producer
         FlinkKafkaProducer010.FlinkKafkaProducer010Configuration<String> flinkKafkaProducer010 = FlinkKafkaProducer010.writeToKafkaWithTimestamps(

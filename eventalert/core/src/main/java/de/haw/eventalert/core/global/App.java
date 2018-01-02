@@ -13,5 +13,6 @@ public class App {
         //clusterClient.run(new JobWithJars())
         //URL url = URI.create("target/")
         //clusterClient.run(new JobWithJars(null, new URL("target/core.jar")))
+//        Program
     }
 }
