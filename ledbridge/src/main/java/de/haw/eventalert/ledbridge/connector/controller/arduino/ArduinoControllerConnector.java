@@ -2,6 +2,7 @@ package de.haw.eventalert.ledbridge.connector.controller.arduino;
 
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
 import de.haw.eventalert.ledbridge.connector.controller.EffectableLEDControllerConnector;
+import de.haw.eventalert.ledbridge.entity.color.Colors;
 import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
 import de.haw.eventalert.ledbridge.entity.event.DimEvent;
 import de.haw.eventalert.ledbridge.entity.event.TimedColorEvent;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tim on 12.05.2017.
@@ -64,6 +66,30 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
             } catch (IOException e) {
                 LOG.error("error closeing aurdino connection", e);
             }
+        }
+    }
+
+    @Override
+    public void playStartEffect() {
+        TimedColorEvent color1 = new TimedColorEvent();
+        color1.setBrightness(10);
+        color1.setColor(Colors.createRGBW(255, 0, 0, 0));
+        color1.setDuration(100);
+        TimedColorEvent color2 = new TimedColorEvent();
+
+        color2.setBrightness(100);
+        color2.setColor(Colors.createRGBW(0, 0, 255, 0));
+        color2.setDuration(100);
+
+        try {
+            for (int i = 0; i < 5; i++) {
+                onTimedColorEvent(color1);
+                TimeUnit.MILLISECONDS.sleep(100);
+                onTimedColorEvent(color2);
+                TimeUnit.MILLISECONDS.sleep(100);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

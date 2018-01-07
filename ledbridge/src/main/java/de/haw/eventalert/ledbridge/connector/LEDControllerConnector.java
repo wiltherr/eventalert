@@ -9,4 +9,6 @@ public interface LEDControllerConnector {
     void close();
 
     void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedException;
+
+    void playStartEffect();
 }

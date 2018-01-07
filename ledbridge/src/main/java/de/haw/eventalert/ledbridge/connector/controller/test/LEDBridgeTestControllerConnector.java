@@ -29,6 +29,11 @@ public class LEDBridgeTestControllerConnector extends EffectableLEDControllerCon
     }
 
     @Override
+    public void playStartEffect() {
+        LOG.info("Playing startup sequence");
+    }
+
+    @Override
     public void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedException {
         LOG.info("New ledEvent from type: {}", ledEvent.getType());
     }

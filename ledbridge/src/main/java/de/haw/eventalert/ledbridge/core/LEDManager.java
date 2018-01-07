@@ -69,9 +69,10 @@ public class LEDManager {
             LEDControllerConnector ledControllerConnector = entry.getValue();
             LOG.debug("starting connector with id={}", id);
             boolean isConnected = false;
-            for (int retryAttempt = 0; retryAttempt < START_RETRIES && !isConnected; retryAttempt++) {
+            for (int retryAttempt = 0; retryAttempt < START_RETRIES; retryAttempt++) {
                 isConnected = ledControllerConnector.open();
                 if (isConnected) {
+                    ledControllerConnector.playStartEffect();
                     break;
                 } else {
                     //Wait for the next retry

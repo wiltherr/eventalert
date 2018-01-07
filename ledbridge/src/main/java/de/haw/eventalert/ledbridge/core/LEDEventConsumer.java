@@ -43,7 +43,7 @@ public class LEDEventConsumer {
         LOG.info("Consumer is started");
         while (!isStop) {
             ConsumerRecords<Long, String> records = consumer.poll(consumerTimeout);
-            LOG.debug("Consumer received {} records in last {}ms", records.count(), consumerTimeout);
+            LOG.trace("Consumer received {} records in last {}ms", records.count(), consumerTimeout);
             for (ConsumerRecord<Long, String> record : records) {
                 try {
                     LEDEvent ledEvent = LEDEventConverter.toLEDEvent(record.value());
