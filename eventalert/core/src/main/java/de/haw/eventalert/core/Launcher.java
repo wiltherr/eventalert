@@ -2,6 +2,7 @@ package de.haw.eventalert.core;
 
 import de.haw.eventalert.core.consumer.AlertEventConsumerJob;
 import de.haw.eventalert.core.producer.email.EMailAlertEventProducerJob;
+import de.haw.eventalert.core.producer.telegram.TelegramAlertEventProducerJob;
 
 public class Launcher {
 
@@ -14,6 +15,9 @@ public class Launcher {
                     return;
                 case "job:producer:email":
                     EMailAlertEventProducerJob.main(args);
+                    return;
+                case "job:producer:telegram":
+                    TelegramAlertEventProducerJob.main(args);
                     return;
             }
 

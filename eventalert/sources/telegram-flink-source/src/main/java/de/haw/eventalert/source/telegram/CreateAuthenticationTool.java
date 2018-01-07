@@ -52,7 +52,7 @@ public class CreateAuthenticationTool {
             if ("y".equals(userInput)) {
                 System.out.println("Key file will be overwritten after successful authentication!");
             } else {
-                System.out.println("Key file will not be overwirrten. exiting creation process.");
+                System.out.println("Key file will not be overwritten. exiting creation process.");
                 System.exit(1);
             }
         }

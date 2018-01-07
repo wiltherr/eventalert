@@ -8,7 +8,6 @@ import com.github.badoualy.telegram.tl.api.*;
 public class TelegramAbstractEvent {
     private TLAbsMessage message;
     private TLAbsChat chat;
-    //private Map<Integer, TLAbsUser> users; //TODO make a map with user ids as key
     private TLAbsUser user;
 
     public TelegramAbstractEvent() {

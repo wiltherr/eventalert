@@ -18,7 +18,7 @@ import java.io.IOException;
  * callback class for telegram events, to generate events on {@link TelegramEventListener}.
  * Implementation of the {@link UpdateCallback} interface.
  * <p>
- *     note: currently only some updates are supported.
+ * note: currently only some updates are supported.
  */
 public class TelegramEventCallback implements UpdateCallback {
 
@@ -60,7 +60,7 @@ public class TelegramEventCallback implements UpdateCallback {
         } catch (RpcErrorException e) {
             LOG.error("converting message failed: error on on get message. message id was {}", messageId, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("failed to generate abstract event", e);
         }
 
 
@@ -74,24 +74,7 @@ public class TelegramEventCallback implements UpdateCallback {
             resultMessageEvent.setMessage(tlMessage.getMessage())
                     .setDate(tlMessage.getDate())
                     .setFromId(tlMessage.getFromId())
-                    //.setFrom(User.getName(telegramClient,tlMessage.getFromId()))
                     .setToId(User.getSelfId(telegramClient));
-
-//            if(tlMessage.getToId() instanceof TLPeerUser) {
-//                LOG.debug("TLMessage toId was TLPeerUser");
-//                telegramMessageEvent.setToId(User.getName(telegramClient,((TLPeerUser) tlMessage.getToId()).getUserId()))
-//                    .setToId(((TLPeerUser) tlMessage.getToId()).getUserId());
-//            } else if(tlMessage.getToId() instanceof TLPeerChat) {
-//                LOG.debug("TLMessage toId was TLPeerChat (setting toId and to with Chat-Title)");
-//                //telegramMessageEvent.setToId(User.getName)
-//                telegramMessageEvent.setToId(((TLPeerChat) tlMessage.getToId()).getChatId())
-//                        .setToNumber(Chat.getTitle(telegramClient,((TLPeerChat) tlMessage.getToId()).getChatId()));
-//
-//            } else {
-//                LOG.warn("TLMessage toId was not instance of TLPeerUser or TLPeerChat! It was instance of {}. use fallback selfUser!", tlMessage.getToId().getClass().getName());
-//                telegramMessageEvent.setToId(User.getSelfName(telegramClient))
-//                        .setToId(User.getSelfId(telegramClient));
-//            }
         }
 
         if (telegramAbstractEvent.getChat() != null) {
@@ -115,17 +98,20 @@ public class TelegramEventCallback implements UpdateCallback {
         if (tlUpdates.getUpdates().isEmpty())
             LOG.info("Update was empty");
 
+        //process update
         tlUpdates.getUpdates().forEach(absUpdate -> this.processUpdate(absUpdate, telegramClient));
+
+        //only for debug logging
         tlUpdates.getChats().forEach(tlAbsChat -> {
             if (tlAbsChat instanceof TLChat) {
-                LOG.info("Chat title was {} ", ((TLChat) tlAbsChat).getTitle());
+                LOG.debug("Chat title was {} ", ((TLChat) tlAbsChat).getTitle());
             }
         });
 
         tlUpdates.getUsers().forEach(tlAbsUser -> {
             if (tlAbsUser instanceof TLUser) {
                 if (((TLUser) tlAbsUser).getSelf())
-                    LOG.info("User was username: {}, firstname: {}", ((TLUser) tlAbsUser).getUsername(), ((TLUser) tlAbsUser).getFirstName());
+                    LOG.debug("User was username: {}, firstname: {}", ((TLUser) tlAbsUser).getUsername(), ((TLUser) tlAbsUser).getFirstName());
             }
         });
 
@@ -144,31 +130,6 @@ public class TelegramEventCallback implements UpdateCallback {
 
     @Override
     public void onShortChatMessage(@NotNull TelegramClient telegramClient, @NotNull TLUpdateShortChatMessage tlUpdate) {
-        //Wird in gruppen getriggert
-//        TelegramEvent event = new TelegramEvent();
-//        //Setting Time & Message
-//        event
-//                .setTime((long) tlUpdate.getDate())
-//                .setMessage(tlUpdate.getTelegramAbstractEvent());
-//
-//
-//        //Setting SendingUser
-//        String userName = User.getName(telegramClient, tlUpdate.getFromId());
-//        event.setSendingUserName(userName)
-//                .setSendingUserId(tlUpdate.getFromId());
-//        //Setting Group
-//        String groupName = Chat.getTitle(telegramClient, tlUpdate.getChatId());
-//        event.setGroupId(tlUpdate.getChatId())
-//                .setGroupName(groupName);
-//        //Setting ReceivingUser
-//        String selfName = User.getSelfName(telegramClient);
-//        Integer selfId = User.getSelfId(telegramClient);
-//        event.setReceivingUserName(selfName)
-//                .setReceivingUserId(selfId);
-//
-//        if(event.getReceivingUserId().equals(event.getSendingUserId()))
-//            event.setSelfMessage(true);
-
         TelegramAbstractEvent telegramAbstractEvent = getTelegramAbstractEvent(telegramClient, tlUpdate.getId());
         LOG.debug("TLUpdateShortChatMessage called");
         listener.onMessage(telegramAbstractEvent);
@@ -177,26 +138,10 @@ public class TelegramEventCallback implements UpdateCallback {
 
     @Override
     public void onShortMessage(@NotNull TelegramClient telegramClient, @NotNull TLUpdateShortMessage tlUpdateShortMessage) {
-        //Wird in einzelnen chats getriggert
-//        TelegramEvent event = new TelegramEvent();
-//
-//        event.setMessage(tlUpdateShortMessage.getMessage())
-//                .setTime((long) tlUpdateShortMessage.getDate());
-//
-//        String userName = User.getName(telegramClient, tlUpdateShortMessage.getUserId());
-//        event.setSendingUserName(userName)
-//                .setSendingUserId(tlUpdateShortMessage.getUserId());
-//        event.setReceivingUserName(User.getSelfName(telegramClient))
-//                .setReceivingUserId(User.getSelfId(telegramClient));
-//
-//        if(event.getReceivingUserId().equals(event.getSendingUserId()))
-//            event.setSelfMessage(true);
-
         TelegramAbstractEvent telegramAbstractEvent = getTelegramAbstractEvent(telegramClient, tlUpdateShortMessage.getId());
         LOG.debug("TLUpdateShortMessage called");
         listener.onMessage(telegramAbstractEvent);
         listener.onMessage(getTelegramMessageEvent(telegramClient, telegramAbstractEvent));
-        //LOG.debug("ALT Message: {} ", Message.getMessage(telegramClient,tlUpdateShortMessage.getId()));
     }
 
     @Override
