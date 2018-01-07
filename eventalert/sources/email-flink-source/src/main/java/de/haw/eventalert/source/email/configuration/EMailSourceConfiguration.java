@@ -1,12 +1,13 @@
 package de.haw.eventalert.source.email.configuration;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 /**
  * value object for email source configuration
  * can be created with {@link EMailSourceConfiguration#fromProperties(Properties)}
  */
-public class EMailSourceConfiguration { //TODO in der grafik das paket ändern?
+public class EMailSourceConfiguration implements Serializable { //TODO in der grafik das paket ändern?
 
     public static final String PROPERTY_KEY_SOURCE_ID = "source.id";
     public static final String PROPERTY_KEY_EMAIL_SERVER_IP = "email.server.ip";

@@ -41,6 +41,7 @@ public class AlertEventProducer {
                 new SimpleStringSchema(),
                 producerProperties
         );
+        flinkKafkaProducer010.name("AlertEvent Kafka Producer");
 
         flinkKafkaProducer010.setLogFailuresOnly(false);
         flinkKafkaProducer010.setFlushOnCheckpoint(true);

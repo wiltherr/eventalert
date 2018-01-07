@@ -27,7 +27,7 @@ public class AlertEventConsumerJob {
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
         //Get all alert-events
-        DataStream<FilterRule> matchingFilterRuleStream = env.addSource(AlertEventConsumer.createAlertEventConsumer())
+        DataStream<FilterRule> matchingFilterRuleStream = env.addSource(AlertEventConsumer.createAlertEventConsumer(), "AlertEvent Kafka Consumer")
                 .flatMap(AlertEvents.convertToAlertEvent())
                 .filter(AlertEventConsumer.filterAlertEventsWithFilterRules(filterRuleManager))
                 .flatMap(AlertEventConsumer.collectMatchingFilters(filterRuleManager));
@@ -36,7 +36,7 @@ public class AlertEventConsumerJob {
                 .map(FilterRule::getAction) //get action of filter
                 .addSink(new ActionSink()).name("Action Sink"); //execute action
 
-        env.execute();
+        env.execute("AlertEventConsumerJob");
     }
 
 
