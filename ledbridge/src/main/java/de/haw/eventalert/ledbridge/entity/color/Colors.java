@@ -33,4 +33,25 @@ public class Colors {
     public static RGB createRGB() {
         return new RGBImpl(0, 0, 0);
     }
+
+    /**
+     * creates a {@link RGB} color of a {@link java.awt.Color}
+     *
+     * @param color java awt color
+     * @return {@link de.haw.eventalert.ledbridge.entity.color.types.Color RGB color} for ledbridge
+     */
+    public static RGB createRGB(java.awt.Color color) {
+        return new RGBImpl(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    /**
+     * creates a {@link RGBW} color of a {@link java.awt.Color}
+     *
+     * @param color java awt color
+     * @param w     value for white led (0-255)
+     * @return {@link de.haw.eventalert.ledbridge.entity.color.types.Color RGB color} for ledbridge
+     */
+    public static RGBW createRGBW(java.awt.Color color, int w) {
+        return new RGBWImpl(color.getRed(), color.getGreen(), color.getBlue(), w);
+    }
 }

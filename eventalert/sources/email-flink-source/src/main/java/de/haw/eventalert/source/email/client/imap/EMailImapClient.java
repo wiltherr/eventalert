@@ -96,7 +96,7 @@ public class EMailImapClient implements EMailClient {
                 try {
                     folder.idle(); //TODO this is not supported by greenMail.
                 } catch (MessagingException e) {
-                    throw new ConnectionFailedException("folder idle failed");
+                    throw new ConnectionFailedException("folder idle failed", e);
                 }
             }
         }

@@ -18,6 +18,7 @@
         <module>sources/telegram-flink-source</module>
         <module>sources/email-flink-source</module>
         <module>sources/twitter-flink-source</module>
+        <module>sources/keyboard-flink-source</module>
     </modules>
 
     <name>EventAlert</name>
