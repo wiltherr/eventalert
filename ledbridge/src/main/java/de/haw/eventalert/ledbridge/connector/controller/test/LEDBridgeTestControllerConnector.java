@@ -3,10 +3,7 @@ package de.haw.eventalert.ledbridge.connector.controller.test;
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
 import de.haw.eventalert.ledbridge.connector.LEDEventTypeNotSupportedException;
 import de.haw.eventalert.ledbridge.connector.controller.EffectableLEDControllerConnector;
-import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
-import de.haw.eventalert.ledbridge.entity.event.DimEvent;
-import de.haw.eventalert.ledbridge.entity.event.LEDEvent;
-import de.haw.eventalert.ledbridge.entity.event.TimedColorEvent;
+import de.haw.eventalert.ledbridge.entity.event.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +11,6 @@ public class LEDBridgeTestControllerConnector extends EffectableLEDControllerCon
     private static final Logger LOG = LoggerFactory.getLogger(LEDBridgeTestControllerConnector.class);
 
     public LEDBridgeTestControllerConnector() {
-        super(true);
     }
 
     @Override
@@ -51,5 +47,10 @@ public class LEDBridgeTestControllerConnector extends EffectableLEDControllerCon
     @Override
     public void onDimEvent(DimEvent dimEvent) {
         LOG.info("Brigthness change to: {}", brightness);
+    }
+
+    @Override
+    public void onColorPartEvent(ColorPartEvent colorPartEvent) {
+        LOG.info("Color part event: {} color, {} partStart, {} partEnd", color.asArray(), colorPartEvent.getPartStart(), colorPartEvent.getPartEnd());
     }
 }

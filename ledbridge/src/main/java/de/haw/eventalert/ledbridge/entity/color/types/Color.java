@@ -19,4 +19,6 @@ import java.io.Serializable;
 })
 public interface Color extends Serializable {
     String[] asArray();
+
+    String toHexString();
 }

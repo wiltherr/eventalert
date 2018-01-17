@@ -3,7 +3,9 @@ package de.haw.eventalert.ledbridge.connector.controller.arduino;
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
 import de.haw.eventalert.ledbridge.connector.controller.EffectableLEDControllerConnector;
 import de.haw.eventalert.ledbridge.entity.color.Colors;
+import de.haw.eventalert.ledbridge.entity.color.types.Color;
 import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
+import de.haw.eventalert.ledbridge.entity.event.ColorPartEvent;
 import de.haw.eventalert.ledbridge.entity.event.DimEvent;
 import de.haw.eventalert.ledbridge.entity.event.TimedColorEvent;
 import org.ardulink.core.Link;
@@ -24,6 +26,8 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
 
     private static final String SERIAL_PORT = "COM4";
     private static final String CONNECTION_URI = "ardulink://serial-jssc?port=" + SERIAL_PORT;
+
+    private static final long TIME_DELAY_MS = 50;
 
     private Link link;
 
@@ -71,23 +75,45 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
 
     @Override
     public void playStartEffect() {
-        TimedColorEvent color1 = new TimedColorEvent();
-        color1.setBrightness(10);
-        color1.setColor(Colors.createRGBW(255, 0, 0, 0));
-        color1.setDuration(100);
-        TimedColorEvent color2 = new TimedColorEvent();
+        DimEvent dimEvent = new DimEvent();
+        //init brightness
+        dimEvent.setBrightness(10);
 
-        color2.setBrightness(100);
-        color2.setColor(Colors.createRGBW(0, 0, 255, 0));
-        color2.setDuration(100);
+        Color colorLeft = Colors.createRGBW(255, 0, 0, 0);
+        Color colorRight = Colors.createRGBW(0, 0, 255, 0);
+        ColorPartEvent colorPartEventLeft = new ColorPartEvent();
+        colorPartEventLeft.setColor(colorLeft);
+        colorPartEventLeft.setPart(50, 99);
+
+        ColorPartEvent colorPartEventRight = new ColorPartEvent();
+        colorPartEventRight.setColor(colorRight);
+        colorPartEventRight.setPart(0, 49);
+
+        TimedColorEvent color1 = new TimedColorEvent();
+
+        color1.setBrightness(10);
+        color1.setColor(colorLeft);
+        color1.setDuration(10);
+        TimedColorEvent color2 = new TimedColorEvent();
+        color2.setBrightness(255);
+        color2.setColor(colorRight);
+        color2.setDuration(10);
 
         try {
             for (int i = 0; i < 5; i++) {
                 onTimedColorEvent(color1);
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(color1.getDuration() + TIME_DELAY_MS);
                 onTimedColorEvent(color2);
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(color2.getDuration() + TIME_DELAY_MS);
             }
+
+            onDimEvent(dimEvent);
+            TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
+            onColorPartEvent(colorPartEventLeft);
+            TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
+            onColorPartEvent(colorPartEventRight);
+            TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -95,20 +121,28 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
 
     @Override
     public void onTimedColorEvent(TimedColorEvent timedColorEventedEvent) {
-        sendMsg("rgbw/" + String.valueOf(timedColorEventedEvent.getDuration()) + "/" + String.join(",", timedColorEventedEvent.getColor().asArray()) + "/");
+        sendMsg("time/" + String.valueOf(timedColorEventedEvent.getDuration()) + "/" + timedColorEventedEvent.getBrightness() + "/" + timedColorEventedEvent.getColor().toHexString() + "/");
     }
 
     @Override
     public void onColorEvent(ColorEvent colorEvent) {
-        sendMsg("colr/" + String.join(",", color.asArray()) + "/");
+        sendMsg("colr/" + colorEvent.getColor().toHexString() + "/");
     }
 
     @Override
     public void onDimEvent(DimEvent dimEvent) {
-        LOG.error("Unsupported event was called");
+        sendMsg("dimm/" + dimEvent.getBrightness() + "/");
+    }
+
+    @Override
+    public void onColorPartEvent(ColorPartEvent colorPartEvent) {
+        sendMsg("part/" + colorPartEvent.getPartStart() + "," + colorPartEvent.getPartEnd() + "/" + colorPartEvent.getColor().toHexString() + "/");
     }
 
     private void sendMsg(String message) {
+        if (!message.endsWith("/")) {
+            message = message + "/";
+        }
         try {
             long id = link.sendCustomMessage(message);
             LOG.info("Message#{} send to arduino. Content: {}", id, message);

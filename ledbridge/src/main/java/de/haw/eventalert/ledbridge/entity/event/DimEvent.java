@@ -1,7 +1,7 @@
 package de.haw.eventalert.ledbridge.entity.event;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.haw.eventalert.ledbridge.entity.led.type.Dimmable;
+import de.haw.eventalert.ledbridge.entity.event.type.Dimmable;
 @JsonTypeName("dimEvent")
 public class DimEvent extends LEDEvent implements Dimmable {
     private int brightness;

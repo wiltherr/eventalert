@@ -1,7 +1,7 @@
 package de.haw.eventalert.ledbridge.entity.led;
 
 
-import de.haw.eventalert.ledbridge.entity.led.type.Dyeable;
+import de.haw.eventalert.ledbridge.entity.event.type.Dyeable;
 
 /**
  * Created by Tim on 12.05.2017.

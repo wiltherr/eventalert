@@ -42,4 +42,27 @@ public class RGBWImpl extends RGBImpl implements RGBW {
     public String[] asArray() {
         return new String[]{Integer.toString(getR()), Integer.toString(getG()), Integer.toString(getB()), Integer.toString(getW())};
     }
+
+    @Override
+    public String toHexString() {
+        return String.format("%02X%02X%02X%02X", getR(), getG(), getB(), getW());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        RGBWImpl rgbw = (RGBWImpl) o;
+
+        return w == rgbw.w;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + w;
+        return result;
+    }
 }

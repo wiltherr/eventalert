@@ -37,6 +37,23 @@ public class LEDEventConverterTest {
     }
 
     @Test
+    void testConvertColorPartEvent() throws IOException {
+        ColorPartEvent colorPartEvent = new ColorPartEvent();
+        colorPartEvent.setTargetLEDId(targetLEDId);
+        colorPartEvent.setColor(color);
+        int partStart = 0;
+        int partEnd = 99;
+        colorPartEvent.setPart(partStart, partEnd);
+        LEDEvent convertedEvent = convertAround(colorPartEvent);
+        assertEquals(colorPartEvent.getTargetLEDId(), colorPartEvent.getTargetLEDId());
+        assertEquals(colorPartEvent.getType(), convertedEvent.getType());
+        assertTrue(convertedEvent instanceof ColorPartEvent);
+        assertArrayEquals(color.asArray(), ((ColorPartEvent) convertedEvent).getColor().asArray());
+        assertEquals(partStart, ((ColorPartEvent) convertedEvent).getPartStart());
+        assertEquals(partEnd, ((ColorPartEvent) convertedEvent).getPartEnd());
+    }
+
+    @Test
     void testConvertDimEvent() throws IOException {
         DimEvent dimEvent = new DimEvent();
         dimEvent.setTargetLEDId(targetLEDId);

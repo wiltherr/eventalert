@@ -14,6 +14,7 @@ import java.io.Serializable;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DimEvent.class, name = "dimEvent"),
         @JsonSubTypes.Type(value = ColorEvent.class, name = "colorEvent"),
+        @JsonSubTypes.Type(value = ColorPartEvent.class, name = "colorPartEvent"),
         @JsonSubTypes.Type(value = TimedColorEvent.class, name = "timedColorEvent")
 })
 public abstract

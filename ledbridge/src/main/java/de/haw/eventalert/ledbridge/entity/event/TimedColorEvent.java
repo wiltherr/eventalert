@@ -2,9 +2,9 @@ package de.haw.eventalert.ledbridge.entity.event;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.haw.eventalert.ledbridge.entity.color.types.Color;
-import de.haw.eventalert.ledbridge.entity.led.effect.TimeLimited;
-import de.haw.eventalert.ledbridge.entity.led.type.Dimmable;
-import de.haw.eventalert.ledbridge.entity.led.type.Dyeable;
+import de.haw.eventalert.ledbridge.entity.event.type.Dimmable;
+import de.haw.eventalert.ledbridge.entity.event.type.Dyeable;
+import de.haw.eventalert.ledbridge.entity.event.type.TimeLimited;
 
 @JsonTypeName("timedColorEvent")
 public class TimedColorEvent extends LEDEvent implements Dimmable, Dyeable<Color>, TimeLimited {

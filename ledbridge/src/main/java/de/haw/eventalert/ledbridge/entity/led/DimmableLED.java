@@ -1,7 +1,7 @@
 package de.haw.eventalert.ledbridge.entity.led;
 
 import de.haw.eventalert.ledbridge.entity.color.Brightness;
-import de.haw.eventalert.ledbridge.entity.led.type.Dimmable;
+import de.haw.eventalert.ledbridge.entity.event.type.Dimmable;
 
 /**
  * Created by Tim on 30.04.2017.

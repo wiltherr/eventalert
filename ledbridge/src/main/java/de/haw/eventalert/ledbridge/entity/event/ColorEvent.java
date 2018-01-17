@@ -2,9 +2,10 @@ package de.haw.eventalert.ledbridge.entity.event;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.haw.eventalert.ledbridge.entity.color.types.Color;
+import de.haw.eventalert.ledbridge.entity.event.type.Dyeable;
 
 @JsonTypeName("colorEvent")
-public class ColorEvent extends LEDEvent {
+public class ColorEvent extends LEDEvent implements Dyeable<Color> {
 
     private Color color;
 
@@ -12,10 +13,12 @@ public class ColorEvent extends LEDEvent {
         super("colorEvent");
     }
 
+    @Override
     public Color getColor() {
         return color;
     }
 
+    @Override
     public void setColor(Color color) {
         this.color = color;
     }

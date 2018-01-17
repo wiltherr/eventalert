@@ -1,4 +1,4 @@
-package de.haw.eventalert.ledbridge.entity.led.type;
+package de.haw.eventalert.ledbridge.entity.event.type;
 
 
 /**
