@@ -1,18 +1,18 @@
 package de.haw.eventalert.ledbridge.entity.event;
 
-public class Part<ColorType> {
+public class Segment<ColorType> {
     private ColorType color;
 
     private int startIndex;
     private int endIndex;
 
-    public Part(ColorType color, int startIndex, int endIndex) {
+    public Segment(ColorType color, int startIndex, int endIndex) {
         this.color = color;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
     }
 
-    public Part() {
+    public Segment() {
     }
 
     public ColorType getColor() {
@@ -41,7 +41,7 @@ public class Part<ColorType> {
 
     @Override
     public String toString() {
-        return "Part{" +
+        return "Segment{" +
                 "color=" + color +
                 ", startIndex=" + startIndex +
                 ", endIndex=" + endIndex +
