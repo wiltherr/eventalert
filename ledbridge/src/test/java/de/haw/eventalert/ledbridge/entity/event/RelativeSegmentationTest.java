@@ -28,8 +28,32 @@ class RelativeSegmentationTest {
         relativeSegmentation = new RelativeSegmentation(SIZE);
     }
 
+    void printSegmentation(RelativeSegmentation segmentation, int absSize) {
+        for (int i = 0; i < segmentation.getCapacity(); i++) {
+            int start = segmentation.getSegmentStartIndex(i, absSize);
+            int end = segmentation.getSegmentEndIndex(i, absSize);
+            System.out.printf("%d: %d/%d (%d)%n", i, start, end, (end - start) + 1);
+        }
+    }
+
     @Test
     void calculateAbsoultePart() {
+        System.out.println("10 - Same capacity");
+        printSegmentation(relativeSegmentation, SIZE);
+        System.out.println("11 - capacity+1");
+        printSegmentation(relativeSegmentation, SIZE_BIGGER);
+        System.out.println("20 - double");
+        printSegmentation(relativeSegmentation, SIZE_DOUBLE);
+        System.out.println("33 - ");
+        printSegmentation(relativeSegmentation, 33); //TODO komische ergebnisse bei rel 7 und rel 8
+        System.out.println("47 - ");
+        printSegmentation(relativeSegmentation, 47);
+        System.out.println("249 - ");
+        printSegmentation(relativeSegmentation, 249);
+
+
+        assertEquals(0, relativeSegmentation.getSegmentStartIndex(32, 33));
+
         //same capacity
         assertEquals(0, relativeSegmentation.getSegmentStartIndex(0, SIZE));
         assertEquals(0, relativeSegmentation.getSegmentEndIndex(0, SIZE));

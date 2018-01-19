@@ -26,6 +26,10 @@ public class RelativeSegmentation {
         return true;
     }
 
+    public int getCapacity() {
+        return segmentation.length;
+    }
+
     public List<Segment<Color>> getSegments(int otherSegmentationCapacity) {
         List<Segment<Color>> absoluteParts = new ArrayList<>();
         int partStartIdx = 0;
@@ -49,18 +53,45 @@ public class RelativeSegmentation {
         return absoluteParts;
     }
 
-    public int getSegmentStartIndex(int relativeSegmentIndex, int otherSegmentationCapacity) {
-        return (int) (otherSegmentationCapacity * ((double) relativeSegmentIndex / (segmentation.length)));
+
+    public int getSegmentStartIndex(int segmentationIndex, int otherSegmentationCapacity) {
+        //return (int) (otherSegmentationCapacity * ((double) relativeSegmentIndex / (segmentation.length)));
+        if (segmentationIndex == 0)
+            return 0;
+
+
+        double ratio = otherSegmentationCapacity / getCapacity();
+//        if(segmentationIndex == this.getCapacity()-1)
+//            return (int) ((otherSegmentationCapacity - 1) -ratio+1);
+
+        int offset = 0;
+//        if(getCapacity() < (otherSegmentationCapacity - getCapacity()) && segmentationIndex >= 1) {
+//            ratio++;
+//        }
+        int segmentStart = (int) Math.ceil(segmentationIndex * ratio);
+
+        return segmentStart;
     }
 
-    public int getSegmentEndIndex(int relPartPos, int absoluteSize) {
-        if (relPartPos == 0 && segmentation.length < absoluteSize) {
-            relPartPos = 1;
+    public int getSegmentEndIndex(int segmentationIndex, int otherSegmentationCapacity) {
+        if (segmentationIndex == this.getCapacity() - 1)
+            return (otherSegmentationCapacity - 1);
+
+
+        int offset = 0;
+        double ratio = otherSegmentationCapacity / segmentation.length;
+        if (getCapacity() < (otherSegmentationCapacity - getCapacity())) {
+            ratio++;
         }
-        if (relPartPos == segmentation.length - 1) {
-            return absoluteSize - 1;
-        }
-        return (int) (relPartPos * ((double) absoluteSize / segmentation.length));
+        return (int) (getSegmentStartIndex(segmentationIndex, otherSegmentationCapacity) + ratio - 1);
+
+        //int offset = (int) (ratio-1);
+//        if(getCapacity() < (otherSegmentationCapacity - getCapacity())) {
+//            offset +=  (int) Math.ceil( ratio);
+//        }
+        //int segmentEnd = (int) (Math.round(segmentationIndex * ratio) + offset);// offset;
+        //return segmentEnd;
+
     }
 
 }
