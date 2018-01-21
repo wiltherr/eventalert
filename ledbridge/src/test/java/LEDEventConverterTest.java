@@ -1,4 +1,5 @@
 import de.haw.eventalert.ledbridge.entity.color.Colors;
+import de.haw.eventalert.ledbridge.entity.color.segmentation.ColorSegmentation;
 import de.haw.eventalert.ledbridge.entity.color.types.Color;
 import de.haw.eventalert.ledbridge.entity.event.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,19 +39,16 @@ public class LEDEventConverterTest {
 
     @Test
     void testConvertColorPartEvent() throws IOException {
-        ColorPartEvent colorPartEvent = new ColorPartEvent();
-        colorPartEvent.setTargetLEDId(targetLEDId);
-        colorPartEvent.setColor(color);
-        int partStart = 0;
-        int partEnd = 99;
-        colorPartEvent.setPart(partStart, partEnd);
-        LEDEvent convertedEvent = convertAround(colorPartEvent);
-        assertEquals(colorPartEvent.getTargetLEDId(), colorPartEvent.getTargetLEDId());
-        assertEquals(colorPartEvent.getType(), convertedEvent.getType());
-        assertTrue(convertedEvent instanceof ColorPartEvent);
-        assertArrayEquals(color.asArray(), ((ColorPartEvent) convertedEvent).getColor().asArray());
-        assertEquals(partStart, ((ColorPartEvent) convertedEvent).getPartStart());
-        assertEquals(partEnd, ((ColorPartEvent) convertedEvent).getPartEnd());
+        ColorSegmentationEvent colorSegmentationEvent = new ColorSegmentationEvent();
+        colorSegmentationEvent.setTargetLEDId(targetLEDId);
+        ColorSegmentation colorSegmentation = ColorSegmentation.create(Colors.createRGBW(255, 0, 0, 0), null, Colors.createRGBW(0, 255, 0, 0), Colors.createRGBW(255, 0, 0, 0));
+        colorSegmentationEvent.setColorSegmentation(colorSegmentation);
+
+        LEDEvent convertedEvent = convertAround(colorSegmentationEvent);
+        assertEquals(colorSegmentationEvent.getTargetLEDId(), colorSegmentationEvent.getTargetLEDId());
+        assertEquals(colorSegmentationEvent.getType(), convertedEvent.getType());
+        assertTrue(convertedEvent instanceof ColorSegmentationEvent);
+        assertEquals(colorSegmentation, ((ColorSegmentationEvent) convertedEvent).getColorSegmentation());
     }
 
     @Test

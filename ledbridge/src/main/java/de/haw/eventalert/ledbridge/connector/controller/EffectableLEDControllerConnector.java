@@ -16,8 +16,8 @@ public abstract class EffectableLEDControllerConnector extends DyeableLed<Color>
     public void processEvent(LEDEvent ledEvent) throws LEDEventTypeNotSupportedException {
         if (ledEvent instanceof ColorEvent) {
             onColorEvent((ColorEvent) ledEvent);
-        } else if (ledEvent instanceof ColorPartEvent) {
-            onColorPartEvent((ColorPartEvent) ledEvent);
+        } else if (ledEvent instanceof ColorSegmentationEvent) {
+            onColorSegmentationEvent((ColorSegmentationEvent) ledEvent);
         } else if (ledEvent instanceof DimEvent) {
             onDimEvent((DimEvent) ledEvent);
         } else if (ledEvent instanceof TimedColorEvent) {
@@ -33,5 +33,5 @@ public abstract class EffectableLEDControllerConnector extends DyeableLed<Color>
 
     public abstract void onDimEvent(DimEvent dimEvent);
 
-    public abstract void onColorPartEvent(ColorPartEvent colorPartEvent);
+    public abstract void onColorSegmentationEvent(ColorSegmentationEvent colorSegmentationEvent);
 }

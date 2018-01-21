@@ -50,7 +50,7 @@ public class LEDBridgeTestControllerConnector extends EffectableLEDControllerCon
     }
 
     @Override
-    public void onColorPartEvent(ColorPartEvent colorPartEvent) {
-        LOG.info("Color part event: {} color, {} partStart, {} partEnd", color.asArray(), colorPartEvent.getPartStart(), colorPartEvent.getPartEnd());
+    public void onColorSegmentationEvent(ColorSegmentationEvent colorSegmentationEvent) {
+//        LOG.info("Color part event: {} color, {} partStart, {} partEnd", color.asArray(), colorSegmentationEvent.getPartStart(), colorSegmentationEvent.getPartEnd());
     }
 }

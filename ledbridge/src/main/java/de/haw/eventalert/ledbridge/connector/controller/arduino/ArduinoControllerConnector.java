@@ -3,9 +3,11 @@ package de.haw.eventalert.ledbridge.connector.controller.arduino;
 import de.haw.eventalert.ledbridge.connector.LEDControllerConnector;
 import de.haw.eventalert.ledbridge.connector.controller.EffectableLEDControllerConnector;
 import de.haw.eventalert.ledbridge.entity.color.Colors;
+import de.haw.eventalert.ledbridge.entity.color.segmentation.ColorSegment;
+import de.haw.eventalert.ledbridge.entity.color.segmentation.ColorSegmentation;
 import de.haw.eventalert.ledbridge.entity.color.types.Color;
 import de.haw.eventalert.ledbridge.entity.event.ColorEvent;
-import de.haw.eventalert.ledbridge.entity.event.ColorPartEvent;
+import de.haw.eventalert.ledbridge.entity.event.ColorSegmentationEvent;
 import de.haw.eventalert.ledbridge.entity.event.DimEvent;
 import de.haw.eventalert.ledbridge.entity.event.TimedColorEvent;
 import org.ardulink.core.Link;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,9 +33,10 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
     private static final long TIME_DELAY_MS = 50;
 
     private Link link;
+    private final int numLEDs;
 
-    public ArduinoControllerConnector() {
-        //super(true); Einkommentieren wenn die LED einen Zustand hat
+    public ArduinoControllerConnector(int numLEDs) {
+        this.numLEDs = numLEDs;
     }
 
     private void connectToArduino(String connectionURI) {
@@ -79,24 +83,31 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
         //init brightness
         dimEvent.setBrightness(10);
 
-        Color colorLeft = Colors.createRGBW(255, 0, 0, 0);
-        Color colorRight = Colors.createRGBW(0, 0, 255, 0);
-        ColorPartEvent colorPartEventLeft = new ColorPartEvent();
-        colorPartEventLeft.setColor(colorLeft);
-        colorPartEventLeft.setPart(50, 99);
+        Color colorRed = Colors.createRGBW(100, 0, 0, 0);
+        Color colorGreen = Colors.createRGBW(0, 100, 0, 0);
+        Color colorBlue = Colors.createRGBW(0, 0, 100, 0);
+        Color colorPurple = Colors.createRGBW(100, 0, 100, 0);
+        ColorSegmentationEvent colorSegmentationEvent = new ColorSegmentationEvent();
+        colorSegmentationEvent.setColorSegmentation(ColorSegmentation.create(colorRed, colorPurple, colorBlue, colorGreen, colorRed, colorRed, colorRed));
 
-        ColorPartEvent colorPartEventRight = new ColorPartEvent();
-        colorPartEventRight.setColor(colorRight);
-        colorPartEventRight.setPart(0, 49);
+        ColorSegmentationEvent colorSegmentationEvent2 = new ColorSegmentationEvent();
+        ColorSegmentation colorSegmentation = ColorSegmentation.create(100);
+        colorSegmentation.setSegment(0, colorGreen);
+        colorSegmentation.setSegment(1, colorGreen);
+        colorSegmentation.setSegment(2, colorGreen);
+        colorSegmentation.setSegment(3, colorGreen);
+        colorSegmentation.setSegment(99, colorGreen);
+        colorSegmentation.setSegment(ColorSegment.create(colorPurple, 45, 55));
+        colorSegmentationEvent2.setColorSegmentation(colorSegmentation);
 
         TimedColorEvent color1 = new TimedColorEvent();
 
         color1.setBrightness(10);
-        color1.setColor(colorLeft);
+        color1.setColor(colorRed);
         color1.setDuration(10);
         TimedColorEvent color2 = new TimedColorEvent();
         color2.setBrightness(255);
-        color2.setColor(colorRight);
+        color2.setColor(colorPurple);
         color2.setDuration(10);
 
         try {
@@ -109,9 +120,9 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
 
             onDimEvent(dimEvent);
             TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
-            onColorPartEvent(colorPartEventLeft);
-            TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
-            onColorPartEvent(colorPartEventRight);
+            onColorSegmentationEvent(colorSegmentationEvent);
+            TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS + 2000);
+            onColorSegmentationEvent(colorSegmentationEvent2);
             TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
 
         } catch (InterruptedException e) {
@@ -135,8 +146,21 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
     }
 
     @Override
-    public void onColorPartEvent(ColorPartEvent colorPartEvent) {
-        sendMsg("part/" + colorPartEvent.getPartStart() + "," + colorPartEvent.getPartEnd() + "/" + colorPartEvent.getColor().toHexString() + "/");
+    public void onColorSegmentationEvent(ColorSegmentationEvent colorSegmentationEvent) {
+        List<ColorSegment> colorSegmentList = colorSegmentationEvent.getColorSegmentation().getSegments(this.numLEDs);
+        LOG.error("errorrrrrrrrrrrrrrrrrrrrrrrrrrr: {}", colorSegmentList);
+        colorSegmentList.stream().forEach(colorSegment -> {
+            if (colorSegment.getColor() == null) {
+                colorSegment.setColor(Colors.createRGBW(0, 0, 0, 0)); //TODO replace with default color
+            }
+            sendMsg("part/" + colorSegment.getStart() + "," + colorSegment.getEnd() + "/" + colorSegment.getColor().toHexString() + "/");
+            try {
+                TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     private void sendMsg(String message) {

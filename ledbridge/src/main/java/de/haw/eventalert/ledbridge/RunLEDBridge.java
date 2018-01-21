@@ -7,7 +7,7 @@ public class RunLEDBridge {
     public static void main(String[] args) {
         LEDManager ledManager = LEDManager.getInstance();
         //Register ControllerConnectors
-        ledManager.registerControllerConnector(new ArduinoControllerConnector(), 0L);
+        ledManager.registerControllerConnector(new ArduinoControllerConnector(249), 0L);
         //ledManager.registerControllerConnector(new LEDBridgeTestControllerConnector(), 0L);
         //Start manager
         ledManager.start();
