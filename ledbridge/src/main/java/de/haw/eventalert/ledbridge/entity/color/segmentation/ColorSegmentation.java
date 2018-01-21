@@ -122,40 +122,48 @@ public class ColorSegmentation {
                 }).collect(Collectors.toList());
     }
 
-    private int calculateRatio(int otherSegmentationCapacity) {
-        if (segmentation.length - 1 <= 2) {
-            return Math.round(otherSegmentationCapacity / (segmentation.length));
-        } else {
-            return Math.round(otherSegmentationCapacity / (segmentation.length - 1));
-        }
+    private double calculateRatio(int otherSegmentationCapacity) {
+        return (double) otherSegmentationCapacity / (segmentation.length);
     }
 
     private int calcSegmentStart(int startPosition, int otherSegmentationCapacity) {
         if (startPosition == 0)
             return 0;
 
-        int ratio = calculateRatio(otherSegmentationCapacity);
+        double ratio = calculateRatio(otherSegmentationCapacity);
+        if (startPosition == segmentation.length - 1)
+            return (int) (otherSegmentationCapacity - ratio + 1);
+
         int offset;
         if (ratio < 2)
             offset = 0;
+//        else if(startPosition % ratio == 0)
+//            offset = 1;
         else
             offset = 1;
 
-        return startPosition * ratio + offset;
+        return (int) (startPosition * ratio + offset);
     }
 
     private int calcSegmentEnd(int endPosition, int otherSegmentationCapacity) {
         if (endPosition == segmentation.length - 1)
             return (otherSegmentationCapacity - 1);
 
-        int ratio = calculateRatio(otherSegmentationCapacity);
+        //int ratio = calculateRatio(otherSegmentationCapacity);
+        double ratio = calculateRatio(otherSegmentationCapacity);
         int offset;
+
         if (ratio < 2)
             offset = 0;
-        else
-            offset = ratio;
 
-        return endPosition * ratio + offset;
+        else
+            offset = (int) ratio;
+
+//        if (endPosition < 2) {
+//            offset--;
+//        }
+
+        return (int) Math.round(endPosition * ratio) + offset;
     }
 
 

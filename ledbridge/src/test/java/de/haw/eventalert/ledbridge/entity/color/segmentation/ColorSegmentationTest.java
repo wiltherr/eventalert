@@ -36,6 +36,12 @@ class ColorSegmentationTest {
         Assertions.assertTrue(colorSegment.getEnd() < capacity);
     }
 
+    static void printSegmentList(List<ColorSegment> colorSegments) {
+        colorSegments.stream().forEach(cs ->
+                System.out.printf("%d - %d: %s (%d)%n", cs.getStart(), cs.getEnd(), cs.getColor(), (cs.getEnd() - cs.getStart()) + 1)
+        );
+    }
+
     @BeforeEach
     void setUp() {
         colorSegmentationEven = new ColorSegmentation(CAPACITY_EVEN);
@@ -100,8 +106,41 @@ class ColorSegmentationTest {
         List<Color> colors100 = colorSegmentation100.getSegments().stream().map(ColorSegment::getColor).collect(Collectors.toList());
         List<Color> colorsBigger = colorSegmentationBigger.getSegments().stream().map(ColorSegment::getColor).collect(Collectors.toList());
         Assertions.assertEquals(colors100, colorsBigger);
-
     }
+
+    @Test
+    void testOtherCapacity3() {
+        Color colorRed = Colors.createRGBW(100, 0, 0, 0);
+        Color colorGreen = Colors.createRGBW(0, 100, 0, 0);
+        Color colorBlue = Colors.createRGBW(0, 0, 100, 0);
+        Color colorPurple = Colors.createRGBW(100, 0, 100, 0);
+        ColorSegmentation colorSegmentation = ColorSegmentation.create(10);
+
+        for (int i = 0; i < colorSegmentation.getCapacity(); i++) {
+            int distribution = i % 4;
+            if (distribution == 0) {
+                colorSegmentation.setSegment(ColorSegment.create(colorRed, i));
+            } else if (distribution == 1) {
+                colorSegmentation.setSegment(ColorSegment.create(colorGreen, i));
+            } else if (distribution == 2) {
+                colorSegmentation.setSegment(ColorSegment.create(colorBlue, i));
+            } else if (distribution == 3) {
+                colorSegmentation.setSegment(ColorSegment.create(colorPurple, i));
+            }
+
+        }
+
+//        colorSegmentation.setSegment(0, colorGreen);
+//        colorSegmentation.setSegment(1, colorRed);
+//        colorSegmentation.setSegment(2, colorBlue);
+//        colorSegmentation.setSegment(3, colorGreen);
+//        colorSegmentation.setSegment(99, colorGreen);
+//        colorSegmentation.setSegment(ColorSegment.create(colorPurple, 45, 55));
+
+        //printSegmentList(colorSegmentation.getSegments(33));
+        printSegmentList(colorSegmentation.getSegments(249));
+    }
+
 
     @Test
     void setSetSegment() {

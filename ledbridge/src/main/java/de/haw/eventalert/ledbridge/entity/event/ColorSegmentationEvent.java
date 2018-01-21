@@ -7,6 +7,7 @@ import de.haw.eventalert.ledbridge.entity.color.segmentation.ColorSegmentation;
 public class ColorSegmentationEvent extends LEDEvent {
 
     private ColorSegmentation colorSegmentation;
+    private boolean nullColorIntentionally;
 
     public ColorSegmentationEvent() {
         super("colorSegmentationEvent");
@@ -19,5 +20,14 @@ public class ColorSegmentationEvent extends LEDEvent {
 
     public void setColorSegmentation(ColorSegmentation colorSegmentation) {
         this.colorSegmentation = colorSegmentation;
+    }
+
+
+    public boolean isNullColorIntentionally() {
+        return nullColorIntentionally;
+    }
+
+    public void setNullColorIntentionally(boolean nullColorIntentionally) {
+        this.nullColorIntentionally = nullColorIntentionally;
     }
 }

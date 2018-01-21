@@ -94,8 +94,7 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
         ColorSegmentation colorSegmentation = ColorSegmentation.create(100);
         colorSegmentation.setSegment(0, colorGreen);
         colorSegmentation.setSegment(1, colorGreen);
-        colorSegmentation.setSegment(2, colorGreen);
-        colorSegmentation.setSegment(3, colorGreen);
+        colorSegmentation.setSegment(98, colorGreen);
         colorSegmentation.setSegment(99, colorGreen);
         colorSegmentation.setSegment(ColorSegment.create(colorPurple, 45, 55));
         colorSegmentationEvent2.setColorSegmentation(colorSegmentation);
@@ -148,12 +147,12 @@ public class ArduinoControllerConnector extends EffectableLEDControllerConnector
     @Override
     public void onColorSegmentationEvent(ColorSegmentationEvent colorSegmentationEvent) {
         List<ColorSegment> colorSegmentList = colorSegmentationEvent.getColorSegmentation().getSegments(this.numLEDs);
-        LOG.error("errorrrrrrrrrrrrrrrrrrrrrrrrrrr: {}", colorSegmentList);
         colorSegmentList.stream().forEach(colorSegment -> {
-            if (colorSegment.getColor() == null) {
+            if (colorSegment.getColor() == null && colorSegmentationEvent.isNullColorIntentionally()) { //TODO this can be done with filtering
                 colorSegment.setColor(Colors.createRGBW(0, 0, 0, 0)); //TODO replace with default color
             }
-            sendMsg("part/" + colorSegment.getStart() + "," + colorSegment.getEnd() + "/" + colorSegment.getColor().toHexString() + "/");
+            if (colorSegment.getColor() != null)
+                sendMsg("part/" + colorSegment.getStart() + "," + colorSegment.getEnd() + "/" + colorSegment.getColor().toHexString() + "/");
             try {
                 TimeUnit.MILLISECONDS.sleep(TIME_DELAY_MS);
             } catch (InterruptedException e) {
