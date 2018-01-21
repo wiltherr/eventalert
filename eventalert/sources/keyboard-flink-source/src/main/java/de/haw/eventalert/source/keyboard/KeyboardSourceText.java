@@ -1,50 +1,32 @@
 package de.haw.eventalert.source.keyboard;
 
 
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
 
 /**
- * this source collects all {@link NativeKeyEvent} registered by {@link NativeKeyListener} and transform it to a
- * ({@link InputType},{@link String key-text}) tuple.
+ * this source collects all {@link NativeKeyEvent} registered by {@link NativeKeyListener} when key is pressed.
+ * it converts every event to its key-text as string
  * <p>
- * notice: jnativehook uses {@link java.awt.Toolkit} to localize key-text. you can set the local by
+ * notice: jnativehook uses the default locale to localize key-text with {@link java.awt.Toolkit}. you can change the local by
  * calling {@link java.util.Locale Locale.setDefault(Locale)} before running the source.
  *
  * @see NativeKeyEvent#getKeyText(int)
  */
-public class KeyboardSourceText extends AbstractKeyboardSource<Tuple2<InputType, String>> {
-
-    private static Tuple2<InputType, String> createTuple2(NativeKeyEvent nativeKeyEvent) {
-        InputType type;
-        switch (nativeKeyEvent.getID()) {
-            case NativeKeyEvent.NATIVE_KEY_PRESSED:
-                type = InputType.PRESSED;
-                break;
-            case NativeKeyEvent.NATIVE_KEY_RELEASED:
-                type = InputType.RELEASED;
-                break;
-            case NativeKeyEvent.NATIVE_KEY_TYPED:
-                type = InputType.TYPED;
-                break;
-            default:
-                type = InputType.UNKOWN;
-        }
-        return Tuple2.of(type, NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
-    }
+public class KeyboardSourceText extends AbstractKeyboardSource<String> {
 
     @Override
-    public void run(SourceContext<Tuple2<InputType, String>> ctx) throws Exception {
+    public void run(SourceContext<String> ctx) throws Exception {
         super.runWithListener(new NativeKeyListener() {
             @Override
             public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-                ctx.collect(createTuple2(nativeKeyEvent));
+
             }
 
             @Override
             public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
+                ctx.collect(NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
             }
 
             @Override
