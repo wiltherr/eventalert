@@ -3,44 +3,46 @@ package de.haw.eventalert.core.producer.keyboard;
 import de.haw.eventalert.core.consumer.action.Action;
 import de.haw.eventalert.core.consumer.action.ActionSink;
 import de.haw.eventalert.core.consumer.action.ledevent.LEDEventAction;
-
-import de.haw.eventalert.ledbridge.entity.color.Colors;
+import de.haw.eventalert.ledbridge.entity.color.segmentation.ColorSegment;
 import de.haw.eventalert.ledbridge.entity.color.segmentation.ColorSegmentation;
-
 import de.haw.eventalert.ledbridge.entity.event.ColorSegmentationEvent;
 import de.haw.eventalert.source.keyboard.KeyboardSourceFull;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.jnativehook.keyboard.NativeKeyEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class KeyboardArrowTest {
-
-    private static final int NUM_SEGMENTS = 25;
+public class KeyboardLeftRight {
+    private static final Logger LOG = LoggerFactory.getLogger(KeyboardLeftRight.class);
+    private static final int NUM_SEGMENTS = 20;
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment().setParallelism(1);
         DataStream<Integer> pressedKeyCodes = env.addSource(new KeyboardSourceFull())
                 .filter(keyevent -> keyevent.getID() == NativeKeyEvent.NATIVE_KEY_PRESSED).map(NativeKeyEvent::getKeyCode);
 
-        AtomicInteger currentPosition =  new AtomicInteger();
+        AtomicInteger currentPosition = new AtomicInteger(0);
 
         DataStream<Action> actionDataStream = pressedKeyCodes.flatMap((keyCode, out) -> {
-            if(currentPosition.get() <= 0) {
-                return;
-            }
+            int current = currentPosition.get();
             if (keyCode == NativeKeyEvent.VC_LEFT) {
-                out.collect(new LEDEventAction(getSegmentationEvent(currentPosition.getAndIncrement(),Colors.BLUE.getColor())));
+                if (current >= NUM_SEGMENTS) {
+                    LOG.warn("max position reached: {}", current);
+                } else {
+                    out.collect(new LEDEventAction(getSegmentationEvent(0, currentPosition.getAndIncrement(), Colors.BLUE.getColor())));
+                }
             } else if (keyCode == NativeKeyEvent.VC_RIGHT) {
-                out.collect(new LEDEventAction(getSegmentationEvent(currentPosition.getAndDecrement(),Colors.OFF.getColor())));
-            } else if (keyCode == NativeKeyEvent.VC_UP) {
-                out.collect(new LEDEventAction(KeyboardTest.ColorEvents.UP_EVENT.getEvent()));
-            } else if (keyCode == NativeKeyEvent.VC_DOWN) {
-                out.collect(new LEDEventAction(KeyboardTest.ColorEvents.DOWN_EVENT.getEvent()));
-            } else {
-                out.collect(new LEDEventAction(KeyboardTest.ColorEvents.ANY_KEY_EVENT.getEvent()));
+                if (current <= 0) {
+                    LOG.warn("min position reached: {}", current);
+                } else {
+                    out.collect(new LEDEventAction(getSegmentationEvent(currentPosition.getAndDecrement() - 1, NUM_SEGMENTS, Colors.OFF.getColor())));
+
+                }
             }
+            LOG.debug("Current Position: {}", currentPosition.get());
         });
         actionDataStream.print();
         actionDataStream.addSink(new ActionSink());
@@ -48,9 +50,10 @@ public class KeyboardArrowTest {
         env.execute();
     }
 
-    private static ColorSegmentationEvent getSegmentationEvent(int segmentPosition, de.haw.eventalert.ledbridge.entity.color.types.Color color) {
+    private static ColorSegmentationEvent getSegmentationEvent(int segmentStart, int segmentEnd, de.haw.eventalert.ledbridge.entity.color.types.Color color) {
         ColorSegmentation colorSegmentation = ColorSegmentation.create(NUM_SEGMENTS);
-        colorSegmentation.setSegment(segmentPosition, color);
+        boolean segmentSet = colorSegmentation.setSegment(ColorSegment.create(color, segmentStart, segmentEnd));
+        LOG.debug("segment: {}-{} / segmentSet: {}", segmentStart, segmentEnd, segmentSet);
         ColorSegmentationEvent colorSegmentationEvent = new ColorSegmentationEvent();
         colorSegmentationEvent.setNullColorIntentionally(false);
         colorSegmentationEvent.setColorSegmentation(colorSegmentation);
