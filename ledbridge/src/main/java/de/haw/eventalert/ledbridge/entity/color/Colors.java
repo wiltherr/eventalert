@@ -30,6 +30,11 @@ public class Colors {
         return new RGBWImpl(r, g, b, w);
     }
 
+    public static RGBW createRGBW(int r, int g, int b) {
+        //convert to rgbw ()
+        return new RGBWImpl(r, g, b, Math.min(r, Math.min(g, b)));
+    }
+
     public static RGB createRGB() {
         return new RGBImpl(0, 0, 0);
     }
