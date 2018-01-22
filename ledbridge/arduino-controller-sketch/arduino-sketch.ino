@@ -7,7 +7,7 @@
 #define PIN 6
 //#define NUM_LEDS 288
 #define NUM_LEDS 249
-#define BRIGHTNESS 255
+
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin n
 // Parameter 3 = pixel type flags, add together as needed:
@@ -19,24 +19,18 @@
 //Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRBW + NEO_KHZ800);
 
-uint32_t idleColor = strip.Color(0,0,0,0);
+uint32_t parts[MAX_PARTS];
+uint32_t defaultColor = strip.Color(0,0,0,0);
+int defaultBrightness = 100;
 
 /** Ardulink Sutff **/
 String inputString = "";         // a string to hold incoming data (this is general code you can reuse)
 boolean stringComplete = false;  // whether the string is complete (this is general code you can reuse)
 
 void setup() {
-  /** Adafruit NeoPixel Stuff **/
-  // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
-#if defined (__AVR_ATtiny85__)
-  if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
-#endif
-  // End of trinket special code
-
-  strip.setBrightness(BRIGHTNESS);
+  strip.setBrightness(defaultBrightness);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
-
   /** Ardulink Sutff **/
   Serial.begin(115200);
 
@@ -48,106 +42,122 @@ void setup() {
 
 void loop() {
 
-    /** Ardulink Sutff **/
-   if (stringComplete) {
+  /** Ardulink Sutff **/
+  if (stringComplete) {
+    log("---");
+    //serial message inputString was completed, now check if it was a valid massage
+    boolean msgValid = false;
     if(inputString.startsWith("alp://")) { // OK is a message I know (this is general code you can reuse)
-      boolean msgRecognized = true;
-      if(inputString.substring(6,10) == "cust") //for all custom events
-      {
-        if(inputString.substring(11,15) == "rgbw") { //Command example: alp://cust/rgbw/500/127,128,129,130/?id=123
-          int paramStartPos = 16;
-          //Duration
-          int paramEndPos = inputString.indexOf('/', paramStartPos); //move paramEndPos to next "/"
-          int duration = inputString.substring(paramStartPos, paramEndPos).toInt(); //in example: 127
-
-          paramStartPos = paramEndPos+1; //move paramStartPos to right
-          paramEndPos = inputString.indexOf('/', paramStartPos);
-
-          String colorParams = inputString.substring(paramStartPos,paramEndPos);
-          uint32_t color = convertToColor(colorParams);
-
-          log("Blinkeffect triggered");
-
-          //Trigger function:
-          fullColor(color);
-          delay(duration);
-          resetColor();
-
-        } else if (inputString.substring(11,15) == "colr") { //Command example: alp://cust/colr/127,128,129,130/?id=123
-          int paramStartPos = 16;
-          int paramEndPos = inputString.indexOf('/', paramStartPos); //move paramEndPos to next "/"
-          String colorParams = inputString.substring(paramStartPos,paramEndPos);
-
-          log("Color changed");
-
-          idleColor = convertToColor(colorParams);
-          resetColor();
-        } else if(inputString.substring(11,15) == "part") { //Command example: alp://cust/part/127,128,129,130/0,50/?id=123
-          int paramStartPos = 16;
-
-          //Get the color
-          int paramEndPos = inputString.indexOf('/', paramStartPos); //move paramEndPos to next "/"
-          String colorParams = inputString.substring(paramStartPos,paramEndPos);
-          uint32_t requestedColor = convertToColor(colorParams);
-
-          //Get the part
-          paramStartPos = paramEndPos + 1; //move paramStartPos to right
-          paramEndPos = inputString.indexOf('/', paramStartPos);  //move paramEndPos to next "/"
-          String partParams = inputString.substring(paramStartPos,paramEndPos);
-          //extract the part
-          int partParamEndOfString = partParams.length();
-          int partParamStartPos = 0;
-          int partParamEndPos = partParams.indexOf(',');
-          int partStart = partParams.substring(partParamStartPos, partParamEndPos).toInt();
-          partParamStartPos = partParamEndPos + 1;
-          int partEnd = partParams.substring(partParamStartPos, partParamEndOfString).toInt();
-
-
-          //log("Part from "+String(partStart)+" to "+String(partEnd));
-
-          partColor(requestedColor,partStart,partEnd);
-        } else if(inputString.substring(11,15) == "full") { //Command example: alp://cust/full/ffbc34ffbc34ffbc34ffbc34...ffbc34ffbc34ffbc34ffbc34/?id=123
-          int paramStartPos = 16;
-
-          //Get the all colors for 100 pixels
-          uint32_t paramEndPos = inputString.indexOf('/', paramStartPos); //move paramEndPos to next "/"
-          String fullColorParams = inputString.substring(paramStartPos,paramEndPos);
-          log("Color Params: "+String(paramStartPos)+" to "+String(paramEndPos)+" = "+fullColorParams);
-          fullLED(fullColorParams);
-        } else {
-          msgRecognized = false; // this sketch doesn't know other messages in this case command is ko (not ok)
-        }
-      } else {
-         msgRecognized = false; // this sketch doesn't know other messages in this case command is ko (not ok)
-      }
-
-
-      // Prepare reply message if caller supply a message id (this is general code you can reuse)
-      int idPosition = inputString.indexOf("?id=");
-      if(idPosition != -1) {
-        String id = inputString.substring(idPosition + 4);
-        // print the reply
-        Serial.print("alp://rply/");
-        if(msgRecognized) { // this sketch doesn't know other messages in this case command is ko (not ok)
-          Serial.print("ok?id=");
-        } else {
-          Serial.print("ko?id=");
-        }
-        Serial.print(id);
-        Serial.print('\n'); // End of Message
-        Serial.flush();
-      }
+      inputString.remove(0,6); // remove "alp://"
+    }
+    if(inputString.startsWith("cust/")) { //for all custom events
+      inputString.remove(0,5); // remove "cust/"
     }
 
-    // clear the string:
+    //extract the 4 char command
+    String command = inputString.substring(0,4);
+    //extract the parameters (remove the slash between command and parameters)
+    String parameters = inputString.substring(5,inputString.length()-1);
+
+    if(command.equals("time")) { //Command example: alp://cust/time/500/100/0A0B0C0D/?id=123
+      msgValid = true;
+      //Duration
+      int nextDelimeter = parameters.indexOf('/');
+      int duration = parameters.substring(0, nextDelimeter).toInt(); //in example: 127
+
+      //Brigthness
+      int lastDelimeter = nextDelimeter + 1;
+      nextDelimeter = parameters.indexOf('/', lastDelimeter);
+      int brightness = parameters.substring(lastDelimeter, nextDelimeter).toInt();
+      log("Brightness params: "+String(brightness));
+      //Color
+      lastDelimeter = nextDelimeter + 1;
+      nextDelimeter = parameters.indexOf('/', lastDelimeter);
+      String colorParams = parameters.substring(lastDelimeter, nextDelimeter);
+      log("Color params: "+colorParams);
+      uint32_t color = convertToColor(colorParams);
+
+      log("Blinkeffect triggered");
+
+      fullColor(color);
+      ledBrightness(brightness);
+      ledShow();
+      delay(duration);
+      resetBrightness();
+      resetColor();
+      ledShow();
+
+    } else if(command.equals("dimm")) { //Command example: alp://cust/dimm/50/?id=123
+      msgValid = true;
+      //brightness
+      int nextDelimeter = parameters.indexOf('/');
+      int brightness = parameters.substring(0, nextDelimeter).toInt();
+      log("set brightness to "+String(brightness));
+      defaultBrightness = brightness;
+      resetBrightness();
+      ledShow();
+    } else if (command.startsWith("colr")) { //Command example: alp://cust/colr/0A0BFF0D/?id=123
+      msgValid = true;
+      int nextDelimeter = parameters.indexOf('/');
+      String colorParams = parameters.substring(0, nextDelimeter);
+      log("InputString:"+inputString);
+      log("Color changed"+colorParams);
+
+      defaultColor = convertToColor(colorParams);
+      resetColor();
+      ledShow();
+    } else if(command.startsWith("part")) { //Command example: alp://cust/part/1,3/A0B0C0D0/?id=123
+      msgValid = true;
+
+      //Get the part
+      int nextDelimeter = parameters.indexOf('/');
+      String partParams = parameters.substring(0,nextDelimeter);
+      //extract the part
+      int partParamEndOfString = partParams.length();
+      int partParamStartPos = 0;
+      int partParamEndPos = partParams.indexOf(',');
+      int partStart = partParams.substring(partParamStartPos, partParamEndPos).toInt();
+      partParamStartPos = partParamEndPos + 1;
+      int partEnd = partParams.substring(partParamStartPos, partParamEndOfString).toInt();
+
+      //Get the color
+      int lastDelimeter = nextDelimeter + 1;
+      nextDelimeter = parameters.indexOf('/', lastDelimeter);  //move paramEndPos to next "/"
+      String colorParams = parameters.substring(lastDelimeter, nextDelimeter);
+      uint32_t requestedColor = convertToColor(colorParams);
+
+
+      //log("Part from "+String(partStart)+" to "+String(partEnd)+" with color: "+colorParams);
+
+      partColor(requestedColor,partStart,partEnd);
+      ledShow();
+    } else {
+      msgValid = false; // this sketch doesn't know other messages in this case command is ko (not ok)
+    }
+
+    // Prepare reply message if caller supply a message id (this is general code you can reuse)
+    int idPosition = inputString.indexOf("?id=");
+    if(idPosition != -1) {
+      String id = inputString.substring(idPosition + 4);
+      // print the reply
+      Serial.print("alp://rply/");
+      if(msgValid) { // this sketch doesn't know other messages in this case command is ko (not ok)
+        Serial.print("ok?id=");
+      } else {
+        Serial.print("ko?id=");
+      }
+      Serial.print(id);
+      Serial.print('\n'); // End of Message
+      Serial.flush();
+    }
+
+    // clear the inputString:
     inputString = "";
     stringComplete = false;
   } else {
-
-  /** Adafruit NeoPixel Stuff **/
-
+    //serial message inputString was NOT completed
+    /** Adafruit NeoPixel Stuff **/
   }
-
 }
 
 void log(String msg) {
@@ -163,87 +173,60 @@ void log(String msg) {
 
 /**
  *  converts a string to strip.Color
- *  rgbw example: in: "255,100,0,30" -> out: strip.Color(255,100,0,30)
- *  rgb example: in: "255,0,30" -> out: strip.Color(255,0,30)
+ *  rgbw example: in: "0A0B0C0D" -> out: strip.Color(10,11,12,13)
+ *  rgb example: in: "FF000D" -> out: strip.Color(255,0,13)
 **/
 uint32_t convertToColor(String params) {
 
   int endOfString = params.length();
-
-  int paramStartPos = 0;
-  //Red
-  int paramEndPos = params.indexOf(',', paramStartPos); //move paramEndPos to next ","
-  int r = params.substring(paramStartPos, paramEndPos).toInt(); //in example: 127
-
-  //Green
-  paramStartPos = paramEndPos+1; //move paramStartPos to right
-  paramEndPos = params.indexOf(',', paramStartPos); //move paramEndPos to next ","
-  int g = params.substring(paramStartPos,paramEndPos).toInt(); //in example: 128
-
-  //Blue
-  paramStartPos = paramEndPos+1; //move paramStartPos to right
-  paramEndPos = params.indexOf(',', paramStartPos); //move paramEndPos to next ","
-  if(paramEndPos == -1) {
-    //We have only one parameter (blue) left
-     paramEndPos = endOfString; //paramEndPos is the end of string
-     //if there is no "," after the blue color, we will read to the paramString end (paramSize): we only have an rgb color
-     int b = params.substring(paramStartPos,paramEndPos).toInt(); //in example: 129
-
-     return strip.Color(r,g,b);
+  long colorHex = (long) strtol(&params[0],NULL,16);
+  if(params.length() == 6) {
+    int red = colorHex >> 16;
+    int green = (colorHex & 0x00ff00) >> 8;
+    int blue = (colorHex & 0x0000ff);
+    log("converted color: "+String(red)+" "+String(green)+" "+String(blue));
+    return strip.Color(red,green,blue);
+  } else if(params.length() == 8) {
+    //TODO a niceer way to parse the parameters. string parsing is expensive!
+    int red = strtol(&params.substring(0,2)[0],NULL,16);
+    int green = strtol(&params.substring(2,4)[0],NULL,16);
+    int blue = strtol(&params.substring(4,6)[0],NULL,16);
+    int white = strtol(&params.substring(6,8)[0],NULL,16);
+    log("converted color: "+String(red)+" "+String(green)+" "+String(blue)+" "+String(white));
+    return strip.Color(red,green,blue,white);
   } else {
-    //we have more parameters then blue: its an rgbw string
-    int b = params.substring(paramStartPos,paramEndPos).toInt(); //in example: 129
-    paramStartPos = paramEndPos+1; //move paramStartPos to right
-
-    //White (optional)
-    paramEndPos = endOfString; //paramEndPos is the end of string
-    int w = params.substring(paramStartPos,paramEndPos).toInt(); //in example: 130
-
-
-    return strip.Color(r,g,b,w);
+    log("Wrong color parameters: "+params);
   }
 }
 
-/** Adafruit NeoPixel Stuff **/
-void fullColorDuration(uint32_t c, uint8_t duration) {
-  fullColor(c);
-  delay(duration);
-  resetColor();
+void resetBrightness() {
+  ledBrightness(defaultBrightness);
 }
 
 void resetColor() {
-  fullColor(idleColor);
+  fullColor(defaultColor);
 }
 
 void fullColor(uint32_t c) {
   for(uint16_t i=0; i<strip.numPixels(); i++) {
     strip.setPixelColor(i, c);
   }
-  strip.show();
 }
 
 void partColor(uint32_t c, int partStart, int partEnd) {
-  //calculate absoult parts
-  int partStartAbs, partEndAbs;
-  partStartAbs = (strip.numPixels() * ((double)  partStart / 100));
-  partEndAbs = (strip.numPixels() * ((double)  partEnd / 100));
-  for(uint16_t i=partStartAbs; i<partEndAbs; i++) {
+  log("p "+String(partStart)+" "+String(partEnd));
+  for(int i = partStart; i <= partEnd; i++) {
     strip.setPixelColor(i, c);
   }
+}
+
+void ledShow() {
   strip.show();
- //log("Absoulute Parts are "+String(partStartAbs)+" to "+String(partEndAbs));
 }
 
-void fullLED(String colors) {
-  int relativeSize = 99;
-  uint32_t relativeColors[relativeSize];
-  for(uint8_t pos = 0, pixelPos = 0; pos < colors.length() && pixelPos < relativeSize; pos += 6, pixelPos++) {
-    String hexColor = colors.substring(pos, pos + 6);
-    log("Pos: "+String(pos)+" to "+String(pos+6));
-    log(String(pixelPos)+" "+hexColor);
-  }
+void ledBrightness(int brightness) {
+  strip.setBrightness(brightness);
 }
-
 
 /** Ardulink Sutff **/
 /*
